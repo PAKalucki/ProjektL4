@@ -1,0 +1,46 @@
+<?php $this->getMessage(); ?>
+
+<form method="post">
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=2><b><input type=text name=nazwa_produktu maxlength=40 value=<?php echo $this->produkty['nazwa_produktu']; ?>></b></td>
+	    </tr>
+		
+		<tr bgcolor=#D4C0A1>
+		<td>Cena magazynowa: </td>
+		<td><input type=text name=cena_magazynowa maxlength=11 value=<?php echo $this->produkty['cena_magazynowa']; ?>></td>
+	  </tr>
+	  <tr bgcolor=#F1E0C6>
+		<td>Cena obowiazuje do: <br><small>wzor: rok-miesiac-dzien - 2015-05-01</small></td>
+		<td><input type=text name=obowiazuje_do maxlength=10 value=<?php echo $this->produkty['obowiazuje_do']; ?>></td>
+	  </tr>
+	  <tr bgcolor=#D4C0A1>
+		<td>Cena sprzedazy: </td>
+		<td><input type=text name=cena_sprzedazy maxlength=11 value=<?php echo $this->produkty['cena_sprzedazy']; ?>></td>
+	  </tr>
+	  <tr bgcolor=#F1E0C6>
+		<td>Opis produktu: </td>
+		<td><textarea name="opis_produktu" rows="6" cols="50"><?php echo $this->produkty['opis_produktu']; ?></textarea></td>
+	  </tr>
+	   <tr bgcolor=#D4C0A1>
+		<td>Kategoria: </td>
+		<td><input type=text name=grupa_produktow maxlength=10 value=<?php echo $this->produkty['grupa_produktow']; ?>></td>
+	  </tr>
+	  <tr bgcolor=#F1E0C6>
+		<td>Przeznaczenie wiekowe: </td>
+		<td><input type=text name=grupa_wiekowa maxlength=10 value=<?php echo $this->produkty['grupa_wiekowa']; ?>></td>
+	  </tr>
+	  <tr bgcolor=#D4C0A1>
+		<td>Ilosc produktu na magazynie: </td>
+		<td><input type=text name=ilosc_produktow maxlength=11 value=<?php echo $this->produkty['ilosc_produktow']; ?>></td>
+	</tr>
+		
+		<tr bgcolor=#D4C0A1>
+			<td colspan=2 style="text-align: center;"><button class="button" name="edytuj">Edytuj</button></td>
+		</tr>		  
+		<tr>
+			<td colspan=2><a href="?url=produkt&page=pokaz&id=<?php echo $_GET['id']; ?>">Wróć</a></td>	
+		</tr>
+	</table>
+</form>

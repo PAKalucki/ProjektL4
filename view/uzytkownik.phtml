@@ -1,0 +1,25 @@
+<?php $this->getMessage(); ?>
+
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=13><b>Lista uzytkownikow:</b></td>
+		</tr>
+		<tr bgcolor=#505050>
+			<td style=color:#fff;>ID</td>
+			<td style=color:#fff;>Login</td>
+			<td style=color:#fff;>Haslo</td>
+			<td style=color:#fff;>Imie </td>
+			<td style=color:#fff;>Nazwisko</td>
+			<td style=color:#fff;>Miasto</td>
+			<td style=color:#fff;>Akcja</td>
+		</tr>
+		
+		<?php foreach($result as $x): ?>
+			<tr bgcolor=#F1E0C6><td><?php echo $x['ID_klienta'] ?></td><td><?php echo $x['login'] ?></td><td><?php echo $x['haslo'] ?></td><td><?php echo $x['imie'] ?></td><td><?php echo $x['nazwisko'] ?></td><td><?php echo $x['miasto'] ?></td>
+			<td><small><a href=?url=uzytkownik&page=edytuj&id=<?php echo $x['ID_klienta'] ?>>Edytuj</a></small> | <small><a href=?url=uzytkownik&page=usun&id=<?php echo $x['ID_klienta'] ?>>Usun</a></small></td></tr>
+		<?php endforeach ?>
+		
+		<tr>
+			<td><a href=index.php?url=profil>Wróć</a></td>
+		</tr>
+	</table>

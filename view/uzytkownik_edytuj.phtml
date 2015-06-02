@@ -1,0 +1,67 @@
+	<?php $this->getMessage(); ?>
+	
+
+		<form method="post">
+			<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+			
+				<tr bgcolor=#505050>
+					<td style=color:#fff; colspan=2>Edytuj klienta:<br><small>Ostatnia modyfikacja: <b><?php echo date('Y-m-d G:i:s', $this->zarzadzaj['data_modyfikacji']) ?></b></small></td>
+				</tr>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Login:</td>
+					<td width=50%><input type=text name=login maxlength=10 value=<?php echo $this->zarzadzaj['login'] ?>></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Hasło:</td>
+					<td width=50%><input type=text name=haslo maxlength=20 value=<?php echo $this->zarzadzaj['haslo'] ?>></td>
+				</tr>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Imie:</td>
+					<td width=50%><input type=text name=imie maxlength=15 value=<?php echo $this->zarzadzaj['imie'] ?>></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Nazwisko:</td>
+					<td width=50%><input type=text name=nazwisko maxlength=25 value=<?php echo $this->zarzadzaj['nazwisko'] ?>></td>
+				</tr>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Miasto:</td>
+					<td width=50%><input type=text name=miasto maxlength=30 value=<?php echo $this->zarzadzaj['miasto'] ?>></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Kod pocztowy:</td>
+					<td width=50%><input type=text name=kod_pocztowy maxlength=10 value=<?php echo $this->zarzadzaj['kod_pocztowy'] ?>></td>
+				</tr>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Ulica:</td>
+					<td width=50%><input type=text name=ulica maxlength=30 value=<?php echo $this->zarzadzaj['ulica'] ?>></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Numer domu:</td>
+					<td width=50%><input type=text name=nr_domu maxlength=4 value=<?php echo $this->zarzadzaj['nr_domu'] ?>></td>
+				</tr>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Numer lokalu:</td>
+					<td width=50%><input type=text name=nr_lokalu maxlength=4 value=<?php echo $this->zarzadzaj['nr_lokalu'] ?>></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Telefon:</td>
+					<td width=50%><input type=text name=telefon maxlength=15 value=<?php echo $this->zarzadzaj['telefon'] ?>></td>
+				</tr>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>E-mail:</td>
+					<td width=50%><input type=text name=email maxlength=20 value=<?php echo $this->zarzadzaj['email'] ?>></td>
+				</tr>
+				
+				
+				<tr bgcolor=#D4C0A1>
+					<td width=50% align=right><button class="button" name="edytuj">Aktualizuj</button></td>
+					<?php if($this->isAdmin()) { ?>
+						<td width=50% align=left><button><a href=index.php?url=uzytkownik>Wróć</a></button></td>
+					<?php } ?>
+					<?php if($this->isLogged()) { ?>
+						<td width=50% align=left><button><a href=index.php?url=profil>Wróć</a></button></td>
+					<?php } ?>
+				</tr>
+			</table>
+		</form>
+

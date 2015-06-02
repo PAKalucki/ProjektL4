@@ -1,0 +1,77 @@
+<?php $this->getMessage(); ?>
+<form method="post" action="index.php?url=koszyk&page=zamow">
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>W koszyku znajduje się <?php echo count($_SESSION['koszyk']); ?> element/-ow</b></td>
+		 </tr>
+		 <tr bgcolor=#505050 style=color:#fff; align=center>
+			<td>LP.</td>
+			<td>Nazwa produktu</td>
+			<td>Cena sprzedazy</td>
+			<td>Opis</td>
+			<td>Kategoria produktu</td>
+			<td>Grupa wiekowa</td>	
+			<td>Ilosc</td>	
+			<td>Akcja</td>
+		</tr>
+		
+		<?php for($i=0; $i < count($_SESSION['koszyk']); $i++) { ?>
+			<?php while($x = mysql_fetch_array($result[$i])) { 
+				if(($i % 2) == 0)
+					$kolor = '#D4C0A1';
+				else
+					$kolor = '#F1E0C6';
+				$y="ilosc";
+				$z=$y.$i;
+			?>
+				<tr bgcolor=<?php echo $kolor; ?>>
+					<td><?php echo $i+1; ?>.</td>
+					<td><a href=\"index.php?url=produkt&page=pokaz&id=<?php echo $x['ID_produktu']; ?>\"><?php echo $x['nazwa_produktu']; ?></a></td>
+					<td><?php echo $x['cena_sprzedazy']; ?>zl</td>
+					<td><?php echo substr($x['opis_produktu'], 0, 30); ?>...</td>
+					<td><?php echo $x['grupa_produktow']; ?></td>
+					<td><?php echo $x['grupa_wiekowa']; ?></td>	
+					<td><input type="number" name=<?php echo $z; ?> min="1" value="1" style="width:30px;"></td>
+					<td><a href="index.php?url=koszyk&page=usun&id=<?php echo $x['ID_produktu']; ?>">USUN</a></td>
+				</tr>
+			<?php } ?>
+		<?php } ?>
+			<?php if(count($_SESSION['koszyk']) == 0) { ?>
+				<tr bgcolor=#D4C0A1 align=center>
+					<td colspan=8>Twoj koszyk jest pusty!</td>
+				</tr>
+			<?php } ?>
+		</table>
+		
+		<br><table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<?php if(count($_SESSION['koszyk']) > 0) {  ?>
+			<tr bgcolor=#505050>
+				<td colspan=7 style=color:#fff;><b>Wybierz opcje platnosci oraz dostawy</b></td>
+			 </tr>
+			 <tr bgcolor=#505050 style=color:#fff; align=center>
+				<td width="250px">Opcje platnosci</td>
+				<td>Opcje dostawy</td>
+			</tr>
+			<tr bgcolor=#D4C0A1 >
+				<td>
+					<input type="radio" checked name="platnosc" value="p">Paragon </br>
+					<input type="radio" name="platnosc" value="f">Faktura
+				</td>
+				<td>
+					<input type="radio" checked name="dostawa" value="l">List (zwykla paczka) </br>
+					<input type="radio" name="dostawa" value="e">List ekonomiczny </br>
+					<input type="radio" name="dostawa" value="p">Przesylka polecona </br>
+					<input type="radio" name="dostawa" value="k">Przesylka kurierem
+				</td>
+			</tr>
+			<tr align=right bgcolor=#D4C0A1 >
+				<td colspan=7><button class="button" name="zamow">Zamow</button></td>
+			</tr>
+			<?php } ?>
+		
+		
+			<tr>
+				<td><a href=index.php>Wróć</a></td>
+			</tr>
+		</table>
+</form>

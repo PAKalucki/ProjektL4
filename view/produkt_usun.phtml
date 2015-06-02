@@ -1,0 +1,17 @@
+<?php $this->getMessage(); ?>
+
+<form method="post">
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		
+		<tr bgcolor=#505050>
+					<td style=color:#fff; width=100% colspan=2>Czy chcesz usunać produkt <b><?php echo $this->produkty['nazwa_produktu']; ?></b> nalezacy do kategorii <b><?php echo $this->produkty['grupa_produktow']; ?></b>?</td>
+				</tr>
+		
+		<tr bgcolor=#D4C0A1>
+			<td colspan=2 style="text-align: center;"><button class="button" name="usun">Usun</button></td>
+		</tr>		  
+		<tr>
+			<td colspan=2><a href="?url=produkt&page=pokaz&id=<?php echo $_GET['id']; ?>">Wróć</a></td>	
+		</tr>
+	</table>
+</form>

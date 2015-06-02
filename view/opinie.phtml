@@ -1,0 +1,38 @@
+<?php $this->getMessage(); ?>
+
+<form method="post">
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=2><b>Opinie wybranego produktu</b></td>
+		 </tr>
+		<?php $i=0;
+			foreach($result as $x):
+			if(($i % 2) == 0)
+				$kolor = '#D4C0A1';
+			else
+				$kolor = '#F1E0C6';
+				?>
+			<tr bgcolor=#D4C0A1>
+				<td width="100px">Ocena:</td>
+				<td><?php echo $x['skala']; ?></td>
+			</tr>
+			 <tr bgcolor=#F1E0C6>
+				<td>Opinia:</td>
+				<td><?php echo $x['komentarz']; ?></td>
+			</tr>
+			<tr bgcolor=#D4C0A1>
+				<td width="100px">Autor:</td>
+				<td><?php echo $x['imie']; ?> <?php echo $x['nazwisko']; ?></td>
+			</tr>
+			<tr><td><br></td></tr>
+		<?php 
+		$i++;
+		endforeach ?>
+		  
+		<tr>
+			<td><a href=index.php?url=produkt&page=pokaz&id=<?php echo $x['PRODUKT_ID_produktu']; ?>>Wróć</a></td>
+		</tr>
+
+	</table>
+</form>

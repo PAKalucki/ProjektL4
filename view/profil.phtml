@@ -1,0 +1,42 @@
+<?php $this->getMessage(); ?>
+<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+<?php if($this->isClient()) { ?>
+	<?php foreach($result as $x): ?>
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=2>Witaj <b><?php echo $x['imie']?> <?php echo $x['nazwisko']?>!</b></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td colspan=2>
+				<ul>
+					<li><a href='?url=zamowienia'>Twoje zamowienia</a></li>
+					<li><a href='?url=uzytkownik&page=edytuj'><b>Edytuj</b></a> lub <a href='?url=uzytkownik&page=usun'><b>usun</b></a> konto</li>
+				</ul>
+			</td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td colspan=2><a href='index.php?url=login&page=logout'>Wyloguj</a></td>
+		</tr>
+	<?php endforeach ?>
+<?php } ?>
+<?php if($this->isAdmin()){ ?>
+	<?php foreach($result as $x): ?>
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=2>Witaj <b><?php echo $x['imie']?> <?php echo $x['nazwisko']?>!</b> Posiadasz uprawnienia administratora.</td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td colspan=2>
+				<ul>
+					<li><a href='?url=zamowienia&page=zarzadzaj'>Zarzadzaj zamowieniami</a></li>
+					<li><a href='index.php?url=uzytkownik'>Zarzadzaj uzytkownikami</a></li>
+					<li><a href='?url=produkt'>Zarzadzaj produktami</a></li>
+					<li><a href='?url=raport'>Zarzadzaj raportami</a></li>
+				</ul>
+			</td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td colspan=2><a href='index.php?url=login&page=logout'>Wyloguj</a></td>
+		</tr>
+	<?php endforeach ?>
+<?php } ?>
+
+</table>

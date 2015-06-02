@@ -1,0 +1,39 @@
+<?php $this->getMessage(); ?>
+<form method="post">
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Potwierdzenie zamowienia:</b></td>
+		 </tr>
+		<?php for($i=0; $i < count($_SESSION['koszyk']); $i++) { ?>
+			<?php while($x = mysql_fetch_array($result[$i])) { 
+				if(($i % 2) == 0)
+					$kolor = '#D4C0A1';
+				else
+					$kolor = '#F1E0C6';
+				$z=$y.$i;
+				$suma = $x['cena_sprzedazy']*$_POST[$z];
+			?>
+				<input type=text name="platnosc" hidden value=<?php echo $_POST['platnosc']; ?>>
+				<input type=text name="dostawa" hidden value=<?php echo $_POST['dostawa']; ?>>
+				<input type=text name=<?php echo $z; ?> hidden value=<?php echo $_POST[$z]; ?>>
+				<tr bgcolor=<?php echo $kolor; ?>>
+					<td>
+						Czy chcesz zamowic <b><?php echo $x['nazwa_produktu']; ?></b> (ilosc sztuk: <?php echo $_POST[$z]; ?>) za <?php echo $x['cena_sprzedazy']; ?>zl (w sumie <?php echo $suma; ?>zl)?
+					</td>
+				</tr>
+			<?php } ?>
+		<?php } ?>
+		<tr bgcolor=#D4C0A1>
+			<td>
+				<b>Wybrana opcja platnosci:</b> <?php echo $pl; ?> <br>
+				<b>Wybrana opcja dostawy:</b> <?php echo $do; ?>
+			</td>
+		</tr>
+		<tr align=right bgcolor=#D4C0A1 >
+			<td colspan=7><button class="button" name="zamow_potwierdz">Zamow</button></td>
+		</tr>
+		<tr>
+			<td><a href=index.php?url=koszyk>Wróć</a></td>
+		</tr>
+	</table>
+</form>

@@ -1,0 +1,61 @@
+<?php $this->getMessage(); ?>
+
+<form method="post" enctype="multipart/form-data">
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=2><b>Dodaj produkt:</b></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td>Nazwa produktu:</td>
+			<td><input type=text name=nazwa_produktu maxlength=40></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td>Rozmiar:</td>
+			<td><input type=text name=rozmiar maxlength=1></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td>Opis produktu:</td>
+			<td><textarea name=opis_produktu rows=6 cols=50></textarea></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td width=60%>Kategoria:</td>
+			<td><input type=text name=grupa_produktow maxlength=30></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td >Grupa wiekowa:</td>
+			<td ><input type=text name=grupa_wiekowa maxlength=30></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td>Cena magazynowa: </td>
+			<td><input type=text name=cena_magazynowa maxlength=11></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td>Cena sprzedazy: </td>
+			<td><input type=text name=cena_sprzedazy maxlength=11></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td>Cena obowiazuje do: <br><small>wzor: rok-miesiac-dzien - 2015-05-01</small></td>
+			<td><input type=text name=obowiazuje_do maxlength=10></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td>Ilosc produktu na magazynie: </td>
+			<td><input type=text name=ilosc_produktow maxlength=11></td>
+		</tr>				
+
+		<tr bgcolor=#F1E0C6>
+			<td>Dodaj zdjecia produktu: </td>
+			<td>
+					Wybierz zdjecia produktu:
+					<input type=file name="nazwyPlikow[]" multiple id="nazwyPlikow">
+			</td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td></td>
+			<td><button class="button" name="dodaj">Dodaj</button></td>
+		</tr>
+		
+		<tr>
+			<td><a href=index.php?url=produkt>Wróć</a></td>
+		</tr>
+	</table>
+</form>

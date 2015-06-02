@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html class="">
+<head>
+	<meta charset="UTF-8" />
+	<title>Sklep Internetowy</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />	 
+</head>
+<body>
+	<table style=width: 100%; cellpadding=4 cellspacing=1 align=center>
+		<tr align="center">
+			<td>Sklep Internetowy - <b>EFDI2</b></td>
+		</tr>
+	</table>
+
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align="center">
+		<tr bgcolor=#505050 align="center">
+			<td colspan=2 >
+				<b><a style=color:#f1e0c6; href=index.php>Strona Główna</a></b>
+			</td>
+			<td colspan=2>
+				<b><a style=color:#f1e0c6; href=index.php?url=produkt>Produkty</a></b>
+			</td>
+			<?php if($this->isLogged()) { ?>
+				<td colspan=2>
+					<b><a style=color:#f1e0c6; href=index.php?url=koszyk>Koszyk (<?php echo count($_SESSION['koszyk']) ?>)</a></b>
+				</td>
+			<?php }
+			 else { ?>
+				<td colspan=2>
+					<b><a style=color:#f1e0c6; href=index.php?url=rejestracja>Rejestracja</a></b>
+				</td>
+			<?php } ?>
+				
+			<td colspan=2>
+				
+				<?php if(!($this->isLogged())) { ?>
+					<b><a style=color:#f1e0c6; href=index.php?url=login>Logowanie</a></b>
+				<?php } 
+				elseif($this->isLogged()) { ?>
+				
+					<b><a style=color:#f1e0c6; href=index.php?url=login&page=logout>Wyloguj</a></b>
+			</td>
+				
+				<td colspan=2>
+					<b><a style=color:#f1e0c6; href=index.php?url=profil>Moje konto</a></b>
+				</td>
+				<?php } ?>
+		</tr>
+	</table><br>
+	
+

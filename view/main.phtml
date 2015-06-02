@@ -1,0 +1,28 @@
+	<?php $this->getMessage(); ?>
+	
+		
+		<center>Jestes aktualnie na stronie głównej gdzie beda zamieszczane aktualnosci.</center>
+		<br>
+		<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+			<tr bgcolor=#505050>
+				<td colspan=3 style=color:#fff; colspan=2><b>Najpopularniejsze produkty w sklepie:</b></td>
+			</tr>
+			<tr>
+				<?php 
+				$il=0;	
+				foreach($result as $r): 
+					if(is_int($il/2))
+						$kolor = '#D4C0A1';
+					else
+						$kolor = '#F1E0C6'; ?>
+								
+						<td bgcolor=<?php echo $kolor ?> width=150px style="border: 1px solid black; text-align: center;">
+							<b><a href=index.php?url=produkt&page=pokaz&id=<?php echo $r['ID_produktu'] ?>><?php echo $r['nazwa_produktu'] ?></b>
+							<br>Kup teraz!</a>
+						</td>
+
+					<?php $il++; ?>
+				<?php endforeach ?>
+			</tr>
+		</table>
+		

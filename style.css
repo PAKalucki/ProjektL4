@@ -1,0 +1,30 @@
+html, body {
+	height: 100%;
+	margin: 0;
+}
+body {
+	background: #e5dfd6;
+	font-family: "Tahoma", Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #000;
+}
+a {
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+	text-decoration: none;
+	font-family: "Tahoma", Arial, Helvetica, sans-serif;
+	font-size: 12px;	
+	color: #000;		
+}
+a:hover {
+	text-decoration: underline;
+}
+footer {  
+	width: 100%;
+
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	color: #000;
+}
+

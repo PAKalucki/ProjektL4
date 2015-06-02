@@ -1,0 +1,199 @@
+<?php $this->getMessage(); ?>
+<form method="post">
+	<table style="width: 900px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Zarzadzaj zamowieniami:</b></td>
+		 </tr>
+		 <tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Wszystkie transakcje:</b></td>
+		 </tr>
+		 <tr bgcolor=#505050>
+			<td style=color:#fff;>Login klienta</td>
+			<td style=color:#fff;>Nazwa produktu</td>
+			<td style=color:#fff;>Status zamowienia</td>
+			<td style=color:#fff;>Data zamowienia</td>
+			<td style=color:#fff;>Rodzaj przesylki</td>
+			<td style=color:#fff;>Opcja platnosci</td>
+			<td style=color:#fff;>Ilosc sztuk</td>
+			<td style=color:#fff;>Cena calkowita</td>
+		 </tr>
+		 
+		 <?php 
+		 $i=0;
+		 foreach($result as $x): 
+			 switch($x['opcja_platnosci'])
+			{
+				case "p":
+					$pl = "Paragon";
+				break;
+				case "f":
+					$pl = "Faktura";
+				break;
+			}
+			switch($x['rodzaj_przesylki'])
+			{
+				case "l":
+					$do = "List (zwykla paczka)";
+				break;
+				case "e":
+					$do = "List ekonomiczny";
+				break;
+				case "p":
+					$do = "Przesylka polecona";
+				break;
+				case "k":
+					$do = "Przesylka kurierem";
+				break;
+			}
+			switch($x['status'])
+			{
+				case "p":
+					$st = "podczas weryfikacji";
+				break;
+				case "w":
+					$st = "zamowienie wystawiono";
+				break;
+				case "o":
+					$st = "zamowienie zostalo oplacone";
+				break;
+				case "s":
+					$st = "zamowienie zostalo wyslane";
+				break;
+				case "z":
+					$st = "rozpoczecie procedury zwrotu";
+				break;
+				case "k":
+					$st = "zwrot przyjety";
+				break;
+			}
+			
+			if(($i % 2) == 0)
+				$kolor = '#D4C0A1';
+			else
+				$kolor = '#F1E0C6';
+				
+			$suma = $x['ilosc_sztuk']*$x['cena_sprzedazy'];
+		 ?>
+			<tr bgcolor=<?php echo $kolor; ?> >
+				<td><?php echo $x['login']; ?></td>
+				<td><?php echo $x['nazwa_produktu']; ?></td>
+				<td><?php echo $st; ?></td>
+				<td><?php echo date('Y-m-d G:i:s', $x['data_wystawienia']); ?></td>
+				<td><?php echo $do; ?></td>
+				<td><?php echo $pl; ?></td>
+				<td><?php echo $x['ilosc_sztuk']; ?></td>
+				<td><?php echo $suma; ?>zl</td>
+			</tr>
+		 <?php 
+		 $i++;
+		 endforeach ?>
+		 
+		 <tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Produkty gotowe do wyslania:</b></td>
+		 </tr>	
+		 
+
+
+
+		
+		<?php 
+		if($wy == true) {
+		 $i=0;
+		 foreach($result2 as $x): 
+			switch($x['rodzaj_przesylki'])
+			{
+				case "l":
+					$do = "List (zwykla paczka)";
+				break;
+				case "e":
+					$do = "List ekonomiczny";
+				break;
+				case "p":
+					$do = "Przesylka polecona";
+				break;
+				case "k":
+					$do = "Przesylka kurierem";
+				break;
+			}
+			
+			if(($i % 2) == 0)
+				$kolor = '#D4C0A1';
+			else
+				$kolor = '#F1E0C6';
+				
+		 ?>
+			<input type=text name=id hidden value=<?php echo $x['ID_zamowienia']; ?>>
+			<tr bgcolor=<?php echo $kolor; ?>>
+				<td colspan=7>
+					Klient <b><?php echo $x['imie']; ?> <?php echo $x['nazwisko']; ?></b> dokonal oplaty za zamowiony przedmiot <b><?php echo $x['nazwa_produktu']; ?></b>.</br>
+					Rodzaj przesylki: <b><?php echo $do; ?></b>
+				</td>
+				<td><button class="button" name="wyslij">Wyslij produkt</button></td>
+			</tr>
+		 <?php 
+		 $i++;
+		 endforeach ?>
+		 <?php } ?>
+		 
+		 <?php if($wy == false) { ?>
+			 <tr bgcolor=#D4C0A1>
+				<td colspan=8>Brak gotowych produktow do wyslania.</td>
+			</tr>
+		<?php } ?>
+
+</form>
+
+<form method="post">
+		 <tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Zwroty produktow:</b></td>
+		 </tr>
+		 <?php 
+		 if($zw == true) {
+		 $j=0;
+		 foreach($result3 as $y): 
+			switch($y['rodzaj_przesylki'])
+			{
+				case "l":
+					$do = "List (zwykla paczka)";
+				break;
+				case "e":
+					$do = "List ekonomiczny";
+				break;
+				case "p":
+					$do = "Przesylka polecona";
+				break;
+				case "k":
+					$do = "Przesylka kurierem";
+				break;
+			}
+			
+			if(($j % 2) == 0)
+				$kolor = '#D4C0A1';
+			else
+				$kolor = '#F1E0C6';
+			$suma = $y['ilosc_sztuk']*$y['cena_sprzedazy'];
+		 ?>
+			<input type=text name=id hidden value=<?php echo $x['ID_zamowienia']; ?>>
+			<tr bgcolor=<?php echo $kolor; ?>>
+				<td colspan=7>
+					Klient <b><?php echo $y['imie']; ?> <?php echo $y['nazwisko']; ?></b> zlozyl prosbe o zwrot pieniedzy za zakupiony produkt (do czego ma prawo przez 30 dni od zakupu) <b><?php echo $y['nazwa_produktu']; ?></b>, <b><?php echo $y['ilosc_sztuk']; ?> sztuk</b>.</br>
+					Cena zakupionego produktu: <b><?php echo $suma; ?>zl</b>
+				</td>
+				<td><button class="button" name="zwrot">Przymij zwrot</button></td>
+			</tr>
+		 <?php 
+		 $j++;
+		 endforeach ?>
+		<?php } ?>
+		<?php if($zw == false) { ?>
+			 <tr bgcolor=#D4C0A1>
+				<td colspan=8>Brak zwortow do zaakceptowania.</td>
+			</tr>
+		<?php } ?>
+		 
+		<tr>
+			<td><a href=index.php?url=profil>Wróć</a></td>
+		</tr>
+		</table>
+		
+</form>

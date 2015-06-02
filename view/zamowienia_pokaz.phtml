@@ -1,0 +1,150 @@
+<?php $this->getMessage(); ?>
+<form method="post">
+	<?php
+		switch($this->zamowienie['opcja_platnosci'])
+		{
+			case "p":
+				$pl = "Paragon";
+			break;
+			case "f":
+				$pl = "Faktura";
+			break;
+		}
+		switch($this->zamowienie['rodzaj_przesylki'])
+		{
+			case "l":
+				$do = "List (zwykla paczka)";
+			break;
+			case "e":
+				$do = "List ekonomiczny";
+			break;
+			case "p":
+				$do = "Przesylka polecona";
+			break;
+			case "k":
+				$do = "Przesylka kurierem";
+			break;
+		}
+		switch($this->zamowienie['status'])
+		{
+			case "p":
+				$st = "podczas weryfikacji";
+			break;
+			case "w":
+				$st = "zamowienie wystawiono";
+			break;
+			case "o":
+				$st = "zamowienie zostalo oplacone";
+			break;
+			case "s":
+				$st = "zamowienie zostalo wyslane";
+			break;
+			case "z":
+				$st = "rozpoczecie procedury zwrotu";
+			break;
+			case "k":
+				$st = "zwrot przyjety";
+			break;
+		}
+	?>
+	
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Szczegoly zamowienie:</b></td>
+		 </tr>
+		<tr bgcolor=#F1E0C6>
+			<td width=50%>Nazwa produktu:</td>
+			<td width=50%><?php echo $this->zamowienie['nazwa_produktu']; ?></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td width=50%>Status:</td>
+			<td width=50%><?php echo $st; ?></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td width=50%>Rodzaj przesylki:</td>
+			<td width=50%><?php echo $do; ?></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td width=50%>Opcja platnosci:</td>
+			<td width=50%><?php echo $pl; ?></td>
+		</tr>
+		
+		<tr bgcolor=#F1E0C6>
+			<td width=50%>Kategoria:</td>
+			<td width=50%><?php echo $this->zamowienie['grupa_produktow']; ?></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td width=50%>Rozmiar:</td>
+			<td width=50%><?php echo $this->zamowienie['rozmiar']; ?></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td width=50%>Cena sprzedazy:</td>
+			<td width=50%><?php echo $this->zamowienie['cena_sprzedazy']; ?></td>
+		</tr>
+		<tr bgcolor=#D4C0A1>
+			<td width=50%>Ilosc sztuk:</td>
+			<td width=50%><?php echo $this->zamowienie['ilosc_sztuk']; ?></td>
+		</tr>
+		<tr bgcolor=#F1E0C6>
+			<td width=50%>Data zamowienie:</td>
+			<td width=50%><?php echo date('Y-m-d G:i:s', $this->zamowienie['data_wystawienia']); ?></td>
+		</tr>
+		
+		<?php if($this->zamowienie['data_oplacenia'] != 0)
+		{ ?>
+			<tr bgcolor=#D4C0A1>
+				<td width=50%>Data oplacenia:</td>
+				<td width=50%><?php echo date('Y-m-d G:i:s', $this->zamowienie['data_oplacenia']); ?></td>
+			</tr>
+		<?php } ?>
+		<?php if($this->zamowienie['data_wyslania'] != 0)
+		{ ?>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Data wyslania:</td>
+					<td width=50%><?php echo date('Y-m-d G:i:s', $this->zamowienie['data_wyslania']); ?></td>
+				</tr>
+		<?php } ?>
+		<?php if($this->zamowienie['data_zwrotu'] != 0)
+		{ ?>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Data zwrotu:</td>
+					<td width=50%><?php echo date('Y-m-d G:i:s', $this->zamowienie['data_zwrotu']); ?></td>
+				</tr>
+		<?php } ?>
+		<?php if($this->zamowienie['data_otrzymania_zwrotu'] != 0)
+		{ ?>
+				<tr bgcolor=#F1E0C6>
+					<td width=50%>Data otrzymania zwrotu:</td>
+					<td width=50%><?php echo date('Y-m-d G:i:s', $this->zamowienie['data_otrzymania_zwrotu']); ?></td>
+				</tr>
+		<?php } ?>
+		<?php if($this->zamowienie['data_zwrotu_pieniedzy'] != 0)
+		{ ?>
+				<tr bgcolor=#D4C0A1>
+					<td width=50%>Data zwrotu pieniedzy:</td>
+					<td width=50%><?php echo date('Y-m-d G:i:s', $this->zamowienie['data_zwrotu_pieniedzy']); ?></td>
+				</tr>
+		<?php } ?>
+		
+		<?php if($this->zamowienie['data_oplacenia'] == 0)
+		{ ?>
+				<tr bgcolor=#505050>
+					<td colspan=2><a style=color:#fff href="?url=zamowienia&page=platnosc&id=<?php echo $this->zamowienie['ID_zamowienia']; ?>">Dokonaj platnosci</a></td>
+		<?php } ?>
+		
+		<?php if($this->zamowienie['data_zwrotu'] == 0 and $this->zamowienie['status'] != "p" and $this->zamowienie['data_wyslania'] != 0)
+		{ ?>
+
+			<tr bgcolor=#505050>
+				<td colspan=2><a style=color:#fff href="?url=zamowienia&page=zwrot&id=<?php echo $this->zamowienie['ID_zamowienia']; ?>">Dokonaj zwrotu</a></td>
+			</tr>
+
+		<?php } ?>
+
+		
+		<tr>
+			<td><a href=index.php?url=zamowienia>Wróć</a></td>
+		</tr>
+		</table>
+		
+</form>

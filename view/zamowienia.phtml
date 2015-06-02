@@ -1,0 +1,102 @@
+<?php $this->getMessage(); ?>
+<form method="post">
+	<table style="width: 900px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td colspan=8 style=color:#fff;><b>Twoje dokonane transakcje:</b></td>
+		 </tr>
+		 <tr bgcolor=#505050>
+			<td style=color:#fff;>Nazwa produktu</td>
+			<td style=color:#fff;>Status zamowienia</td>
+			<td style=color:#fff;>Data zamowienia</td>
+			<td style=color:#fff;>Rodzaj przesylki</td>
+			<td style=color:#fff;>Opcja platnosci</td>
+			<td style=color:#fff;>Ilosc sztuk</td>
+			<td style=color:#fff;>Cena calkowita</td>
+			<td style=color:#fff;>Akcja</td>
+		 </tr>
+		
+	<?php if($ch == true) { ?>
+		<?php 
+		$i=0;
+		foreach($result as $x):
+			if(($i % 2) == 0)
+				$kolor = '#D4C0A1';
+			else
+				$kolor = '#F1E0C6';
+				
+			$suma = $x['ilosc_sztuk']*$x['cena_sprzedazy']; 
+			
+			switch($x['opcja_platnosci'])
+			{
+				case "p":
+					$pl = "Paragon";
+				break;
+				case "f":
+					$pl = "Faktura";
+				break;
+			}
+			switch($x['rodzaj_przesylki'])
+			{
+				case "l":
+					$do = "List (zwykla paczka)";
+				break;
+				case "e":
+					$do = "List ekonomiczny";
+				break;
+				case "p":
+					$do = "Przesylka polecona";
+				break;
+				case "k":
+					$do = "Przesylka kurierem";
+				break;
+			}
+			switch($x['status'])
+			{
+				case "p":
+					$st = "podczas weryfikacji";
+				break;
+				case "w":
+					$st = "zamowienie wystawiono";
+				break;
+				case "o":
+					$st = "zamowienie zostalo oplacone";
+				break;
+				case "s":
+					$st = "zamowienie zostalo wyslane";
+				break;
+				case "z":
+					$st = "rozpoczecie procedury zwrotu";
+				break;
+				case "k":
+					$st = "zwrot przyjety";
+				break;
+			}
+			?>
+			
+			<tr bgcolor=<?php echo $kolor; ?>>
+				<td><?php echo $x['nazwa_produktu']; ?></td>
+				<td><?php echo $st; ?></td>
+				<td><?php echo date('Y-m-d G:i:s', $x['data_wystawienia']); ?></td>
+				<td><?php echo $do; ?></td>
+				<td><?php echo $pl; ?></td>
+				<td><?php echo $x['ilosc_sztuk']; ?></td>
+				<td><?php echo $suma; ?>zl</td>
+				<td><a href="index.php?url=zamowienia&page=pokaz&id=<?php echo $x['ID_zamowienia']; ?>">POKAZ</a></td>
+			</tr>
+					
+		<?php	
+			$i++;
+		endforeach ?>
+	<?php } ?>
+	<?php if($ch == false) { ?>
+		<tr bgcolor=#D4C0A1>
+			<td colspan=8>Brak zamowien na Twoim koncie.</td>
+		</tr>
+	<?php } ?>
+		
+		<tr>
+			<td><a href=index.php?url=profil>Wróć</a></td>
+		</tr>
+		</table>
+		
+</form>

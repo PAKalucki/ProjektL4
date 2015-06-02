@@ -1,0 +1,76 @@
+<?php $this->getMessage(); ?>
+
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<?php if($this->isAdmin()) { ?>
+			<tr bgcolor=#505050>
+				<td colspan=3 style=color:#fff;><a style=color:#f1e0c6; href="index.php?url=produkt&page=dodaj"><b>DODAJ PRZEDMIOT</b></a></td>
+			 </tr>
+		<?php } ?>
+		
+		<tr bgcolor=#505050>
+			<td style=color:#fff; colspan=13>Lista produktow:<br><small>Sortuj według 
+				<form method=POST>
+				<select name="sortuj_k">
+					<option value="none">none</option>
+					<optgroup label="kategorii produktu">
+					<?php foreach($sort1 as $s1): ?>
+						<?php if(isset($_POST['sortuj_k']) and $s1['grupa_produktow'] == $sel_k)
+								$selected_k = "selected=selected";
+							else
+								$selected_k = ""; ?>
+							<option <?php echo $selected_k ?> value=<?php echo $s1['grupa_produktow']; ?>><?php echo $s1['grupa_produktow']; ?></option>	
+					<?php endforeach ?>
+					</optgroup>
+				</select>
+				<select name="sortuj_w">
+					<option value="none">none</option>
+					<optgroup label="grupy wiekowej">
+					<?php foreach($sort2 as $s2): ?>
+						<?php if(isset($_POST['sortuj_k']) and $s2['grupa_wiekowa'] == $sel_w)
+								$selected_w = "selected=selected";
+							else
+								$selected_w = ""; ?>
+							<option <?php echo $selected_w ?> value=<?php echo $s2['grupa_wiekowa']; ?>><?php echo $s2['grupa_wiekowa']; ?></option>	
+					<?php endforeach ?>
+					</optgroup>
+				</select>
+				<button class="button" name="sortuj">Sortuj</button>
+				</form>		
+		
+			</td>
+		</tr>
+		
+		
+			</td>
+		</tr>
+		
+		<?php 
+		$il=0;
+		foreach($result as $x): 
+			if(is_int($il/2))
+				$kolor = '#D4C0A1';
+			else
+				$kolor = '#F1E0C6';	?>
+			
+			<?php if($this->isAdmin() and $x['ilosc_produktow'] <= 5)
+				$kolor = '#ff2323';
+			?>
+				
+			<?php if($il%3==0) { ?>
+				<tr>
+			<?php } ?>
+		
+				<td bgcolor=<?php echo $kolor ?> width="200px" style="border: 1px solid black; text-align: center;"><a href="index.php?url=produkt&page=pokaz&id=<?php echo $x['ID_produktu'] ?>"><b><?php echo $x['nazwa_produktu'] ?></b><br><small>
+				<?php echo substr($x['opis_produktu'], 0, 20); ?>
+				...</small><br><small>Kategoria: <b><?php echo $x['grupa_produktow'] ?></b><br>Grupa wiekowa: <b><?php echo $x['grupa_wiekowa'] ?></b></small></a></td>
+		<?php if($il%3==3) { ?>
+				</tr>
+			<?php } ?>
+		<?php 
+			$il++;
+		endforeach ?>
+		
+		<tr>
+			<td><a href=index.php>Wróć</a></td>
+		</tr>
+	</table>

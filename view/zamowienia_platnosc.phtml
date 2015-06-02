@@ -1,0 +1,39 @@
+<?php $this->getMessage(); ?>
+<form method="post">
+	<?php
+		switch($this->zamowienie['opcja_platnosci'])
+		{
+			case "p":
+				$pl = "Paragon";
+			break;
+			case "f":
+				$pl = "Faktura";
+			break;
+		}
+		$suma = $this->zamowienie['cena_sprzedazy']*$this->zamowienie['ilosc_sztuk'];
+	?>
+	
+	<input type=text name=id hidden value=<?php echo $this->zamowienie['ID_zamowienia']; ?>>
+	
+	<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+		<tr bgcolor=#505050>
+			<td style=color:#fff;><b>Dokonaj platnosci:</b></td>
+		 </tr>
+		<tr bgcolor=#D4C0A1>
+			<td>
+				Dokonaj platnosci za <b><?php echo $this->zamowienie['nazwa_produktu']; ?></b>, ilosc sztuk <b><?php echo $this->zamowienie['ilosc_sztuk']; ?></b>, kwota do zaplaty: <b><?php echo $suma; ?>zl</b>.</br>
+				Platnosc: <?php echo $pl; ?>
+			</td>
+
+		</tr>
+		<tr align=right>
+			<td colspan=7><button class="button" name="zaplac">Zaplac!</button></td>
+		</tr>
+
+		
+		<tr>
+			<td><a href=index.php?url=zamowienia>Wróć</a></td>
+		</tr>
+		</table>
+		
+</form>

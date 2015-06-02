@@ -18,6 +18,7 @@
 			<td style=color:#fff;>Cena calkowita</td>
 		 </tr>
 		 
+	<?php if($check == true) { ?>
 		 <?php 
 		 $i=0;
 		 foreach($result as $x): 
@@ -87,7 +88,9 @@
 		 <?php 
 		 $i++;
 		 endforeach ?>
-		 
+
+		
+		
 		 <tr bgcolor=#505050>
 			<td colspan=8 style=color:#fff;><b>Produkty gotowe do wyslania:</b></td>
 		 </tr>	
@@ -190,7 +193,13 @@
 				<td colspan=8>Brak zwortow do zaakceptowania.</td>
 			</tr>
 		<?php } ?>
-		 
+	<?php } ?> 
+	<?php if($check == false) { ?>
+		<tr bgcolor=#D4C0A1>
+			<td colspan=8>Brak zamowien w sklepie.</td>
+		</tr>
+	<?php } ?> 	
+	
 		<tr>
 			<td><a href=index.php?url=profil>Wróć</a></td>
 		</tr>

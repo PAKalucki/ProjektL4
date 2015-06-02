@@ -29,7 +29,13 @@ class uzytkownik_Model extends Model
 	{
 		if($this->isAdmin())
 		{
-			$result = $this->sql_query("SELECT * FROM `klient`");
+			$check = false;
+			$result2 = $this->sql_query("SELECT * FROM `klient`");
+			if(count($result2[0]) > 0)
+			{
+				$result = $this->sql_query("SELECT * FROM `klient`");
+				$check = true;
+			}
 			include "/../view/uzytkownik.phtml";
 		}
 	}

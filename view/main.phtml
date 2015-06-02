@@ -8,6 +8,7 @@
 				<td colspan=3 style=color:#fff; colspan=2><b>Najpopularniejsze produkty w sklepie:</b></td>
 			</tr>
 			<tr>
+			<?php if($check == true) { ?>
 				<?php 
 				$il=0;	
 				foreach($result as $r): 
@@ -23,6 +24,12 @@
 
 					<?php $il++; ?>
 				<?php endforeach ?>
+			<?php } ?>
+			<?php if($check == false) { ?>
+				<tr bgcolor=#D4C0A1>
+					<td colspan=3 colspan=2>Jeszcze nikt nie kupil zadnego przedmiotu.</td>
+				</tr>
+			<?php } ?>
 			</tr>
 		</table>
 		

@@ -1,0 +1,35 @@
+	<?php $this->getMessage(); ?>
+
+		<table style="width: 500px;" cellpadding=4 cellspacing=1 align=center>
+			<tr bgcolor=#505050>
+				<td colspan=2 style=color:#fff; colspan=2><b>Dane kontaktowe:</b></td>
+			</tr>
+			<tr bgcolor=#D4C0A1>
+				<td align=center colspan=2><b>Sklep internetowy - Projekt L04-02</b><br><b>E-Mail:</b> sklep-intern@wp.pl</td>
+			</tr>
+			
+		<?php if($this->isLogged()) { ?>
+			<form method="post" action="index.php?url=kontakt&page=mail">
+				<tr bgcolor=#505050>
+					<td colspan=3 style=color:#fff; colspan=2><b>Wyslij wiadomosc do pracownikow sklepu:</b></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td>Temat wiadomosci:</td>
+					<td><input type=text name="temat" maxlength=11></td>
+				</tr>
+				 <tr bgcolor=#F1E0C6>
+					<td>Tresc wiadomosci:</td>
+					<td><textarea name="wiadomosc" rows=6 cols=50></textarea></td>
+				</tr>
+				<tr bgcolor=#D4C0A1>
+					<td></td>
+					<td><button class="button" name="wyslij_wiadomosc">Wyslij wiadomosc</button></td>
+				</tr>
+			</form>
+		<?php } ?>
+			<tr>
+				<td><a href=index.php>Wróć</a></td>
+			</tr>
+
+		</table>
+		

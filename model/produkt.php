@@ -35,23 +35,28 @@ class produkt_Model extends Model
 	}
 	public function show()
 	{
-		$sort1 = $this->sql_query("SELECT grupa_produktow FROM produkt GROUP BY grupa_produktow ORDER BY grupa_produktow ASC");	
-		$sort2 = $this->sql_query("SELECT grupa_wiekowa FROM produkt GROUP BY grupa_wiekowa ORDER BY grupa_wiekowa ASC");	
-		
-		if(isset($_POST['sortuj_k']))
-			$sel_k = $_POST['sortuj_k'];
-		if(isset($_POST['sortuj_w']))
-			$sel_w = $_POST['sortuj_w'];
-		
-		if((!isset($_POST['sortuj_k']) or $_POST['sortuj_k'] == "none") and (!isset($_POST['sortuj_w']) or $_POST['sortuj_w'] == "none"))
-			$result = $this->sql_query("SELECT * FROM produkt");
-		elseif(isset($_POST['sortuj_k']) and $_POST['sortuj_w'] == "none")
-			$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' ORDER BY grupa_produktow ASC");
-		elseif(isset($_POST['sortuj_w']) and $_POST['sortuj_k'] == "none")
-			$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_wiekowa = '".$_POST['sortuj_w']."' ORDER BY grupa_wiekowa ASC");
-		elseif(isset($_POST['sortuj_w']) and isset($_POST['sortuj_k']))
-			$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' and grupa_wiekowa = '".$_POST['sortuj_w']."'  ORDER BY grupa_produktow, grupa_wiekowa ASC");
-
+		$query = $this->sql_query("SELECT * FROM produkt");
+		$check = false;
+		if(count($query[0])>0)
+		{
+			$sort1 = $this->sql_query("SELECT grupa_produktow FROM produkt GROUP BY grupa_produktow ORDER BY grupa_produktow ASC");	
+			$sort2 = $this->sql_query("SELECT grupa_wiekowa FROM produkt GROUP BY grupa_wiekowa ORDER BY grupa_wiekowa ASC");	
+			
+			if(isset($_POST['sortuj_k']))
+				$sel_k = $_POST['sortuj_k'];
+			if(isset($_POST['sortuj_w']))
+				$sel_w = $_POST['sortuj_w'];
+			
+			if((!isset($_POST['sortuj_k']) or $_POST['sortuj_k'] == "none") and (!isset($_POST['sortuj_w']) or $_POST['sortuj_w'] == "none"))
+				$result = $this->sql_query("SELECT * FROM produkt");
+			elseif(isset($_POST['sortuj_k']) and $_POST['sortuj_w'] == "none")
+				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' ORDER BY grupa_produktow ASC");
+			elseif(isset($_POST['sortuj_w']) and $_POST['sortuj_k'] == "none")
+				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_wiekowa = '".$_POST['sortuj_w']."' ORDER BY grupa_wiekowa ASC");
+			elseif(isset($_POST['sortuj_w']) and isset($_POST['sortuj_k']))
+				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' and grupa_wiekowa = '".$_POST['sortuj_w']."'  ORDER BY grupa_produktow, grupa_wiekowa ASC");
+			$check = true;
+		}
 		include "/../view/produkt.phtml";
 	}
 	public function dodaj()
@@ -59,62 +64,70 @@ class produkt_Model extends Model
 		if(isset($_POST['dodaj']))
 		{
 			if($this->isAdmin())
-			{
-				mysql_query("INSERT INTO produkt VALUES (NULL, '".$_POST['nazwa_produktu']."', '".$_POST['rozmiar']."', '".$_POST['opis_produktu']."', '".$_POST['grupa_produktow']."', '".$_POST['grupa_wiekowa']."', '".$_POST['ilosc_produktow']."')"); 
-				$id_p = mysql_insert_id();
-				mysql_query("INSERT INTO cena VALUES (NULL, '".$_POST['cena_magazynowa']."', '".time()."', '".$_POST['obowiazuje_do']."', '".$this->getLoggedAdminId()."')"); 
-				$id_c = mysql_insert_id();
-				mysql_query("INSERT INTO produkt_cena VALUES (NULL, '".$_POST['cena_sprzedazy']."', '".$id_p."', '".$id_c."')"); 
-	
-				for($i=0; $i<count($_FILES['nazwyPlikow']); $i++)
+			{	
+				$spr = false;
+				$id = 0;
+				$name="";
+				for($i=0; $i<count($_FILES['nazwyPlikow']['name']); $i++)
 				{
+				
 					$error = "";
 					$target_dir = "uploads/";
-					$target_file = $target_dir . basename($_FILES["nazwyPlikow"]["name"][$i]);
+					$target_file[$i] = $target_dir . basename($_FILES["nazwyPlikow"]["name"][$i]);
 					$uploadOk = 1;
-					$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+					$imageFileType = pathinfo($target_file[$i],PATHINFO_EXTENSION);
 					// Check if image file is a actual image or fake image
 					if(isset($_POST["dodaj"])) {
-						$check = getimagesize($_FILES["nazwyPlikow"]["tmp_name"][$i]);
-						if($check !== false) {
-							echo "File is an image - " . $check["mime"] . ".";
+						$checkk = getimagesize($_FILES["nazwyPlikow"]["tmp_name"][$i]);
+						if($checkk !== false) {
+							//$error =  "File is an image - " . $check["mime"] . ".";
 							$uploadOk = 1;
 						} else {
-							echo "File is not an image.";
+							//$error = "File is not an image.";
 							$uploadOk = 0;
 						}
 					}
 					// Check if file already exists
-					if (file_exists($target_file)) {
-						$error = "Sorry, file already exists.";
+					if (file_exists($target_file[$i])) {
+						$error = "Wybrany plik juz istnieje.";
 						$uploadOk = 0;
 					}
 					// Check file size
-					if ($_FILES["fileToUpload"]["size"] > 500000) {
-						$error = "Sorry, your file is too large.";
+					if ($_FILES["nazwyPlikow"]["size"][$i] > 500000) {
+						$error = "Wybrany plik jest zbyt duzy.";
 						$uploadOk = 0;
 					}
 					// Allow certain file formats
 					if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
 					&& $imageFileType != "gif" ) {
-						$error = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+						$error = "Zly format zdjecia, tylko JPG, JPEG, PNG & GIF.";
 						$uploadOk = 0;
 					}
 					// Check if $uploadOk is set to 0 by an error
 					if ($uploadOk == 0) {
-						echo "error";
+						echo "<table align=center><tr><td>".$error."</td></tr></table>";
 					// if everything is ok, try to upload file
 					} else {
-						if (move_uploaded_file($_FILES["nazwyPlikow"]["tmp_name"][$i], $target_file)) {			
-							mysql_query("INSERT INTO zdjecia VALUES (NULL, '".basename( $_FILES["nazwyPlikow"]["name"][$i])."', '".$id_p."')");
+						if (move_uploaded_file($_FILES["nazwyPlikow"]["tmp_name"][$i], $target_file[$i])) {			
+							if($name != $_POST['nazwa_produktu'])
+							{
+								mysql_query("INSERT INTO produkt VALUES (NULL, '".$_POST['nazwa_produktu']."', '".$_POST['rozmiar']."', '".$_POST['opis_produktu']."', '".$_POST['grupa_produktow']."', '".$_POST['grupa_wiekowa']."', '".$_POST['ilosc_produktow']."')"); 
+								$id_p = mysql_insert_id();
+								mysql_query("INSERT INTO cena VALUES (NULL, '".$_POST['cena_magazynowa']."', '".time()."', '".$_POST['obowiazuje_do']."', '".$this->getLoggedAdminId()."')"); 
+								$id_c = mysql_insert_id();
+								mysql_query("INSERT INTO produkt_cena VALUES (NULL, '".$_POST['cena_sprzedazy']."', '".$id_p."', '".$id_c."')"); 
+								$id = $id_p;
+								$name = $_POST['nazwa_produktu'];
+							}
+							mysql_query("INSERT INTO zdjecia VALUES (NULL, '".basename( $_FILES["nazwyPlikow"]["name"][$i])."', '".$id."')");
+							$spr == true;
+							if($i == count($_FILES['nazwyPlikow']['name']))
+								$this->redirect("index.php?url=produkt", "error", "Produkt zostal dodany poprawnie!");
 						} else {
-							$this->redirect("index.php?url=produkt&page=dodaj", "error", "Wystapil blad podczas wgrywania zdjecia.");
+							$this->redirect("index.php?url=produkt", "error", "Wystapil blad podczas dodawania produktu.");
 						}
 					}
 				}
-				
-				$this->redirect("index.php?url=produkt", "error", "Produkt zostal dodany poprawnie!");
-			
 			}
 			else
 				$this->redirect("index.php?url=produkt", "error", "Nie masz uprawnien do przegladania tej podstrony!");
@@ -146,6 +159,16 @@ class produkt_Model extends Model
 				}
 				else if(isset($_POST['usun']))
 				{
+					$foto = $this->sql_query("SELECT * FROM zdjecia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");					
+					for($i=0; $i<count($foto); $i++)
+					{
+						mysql_query("DELETE FROM zdjecia WHERE PRODUKT_ID_produktu = ".$result[0]['ID_produktu']."");
+					}
+					$opinia = $this->sql_query("SELECT * FROM opinia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");
+					for($i=0; $i<count($opinia); $i++)
+					{
+						mysql_query("DELETE FROM opinia WHERE PRODUKT_ID_produktu = ".$result[0]['ID_produktu']."");
+					}
 					mysql_query("DELETE FROM produkt_cena WHERE CENA_ID_ceny = ".$result[0]['ID_ceny']."");
 					mysql_query("DELETE FROM produkt WHERE ID_produktu = ".$result[0]['ID_produktu']."");
 					mysql_query("DELETE FROM cena WHERE ID_ceny = ".$result[0]['ID_ceny']."");
@@ -192,6 +215,7 @@ class produkt_Model extends Model
 				else
 					mysql_query("INSERT INTO opinia VALUES (NULL, '".$this->getLoggedClientId()."', '".$_POST['skala']."', '".$_POST['opinia']."', '".$_POST['id_produktu']."', ".time().")");
 	
+				$this->redirect("index.php?url=produkt", "error", "Opinia zostala dodana pomyslnie.");
 			}
 		}
 	}

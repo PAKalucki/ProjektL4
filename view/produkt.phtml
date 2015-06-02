@@ -7,6 +7,7 @@
 			 </tr>
 		<?php } ?>
 		
+	<?php if($check == true) { ?>
 		<tr bgcolor=#505050>
 			<td style=color:#fff; colspan=13>Lista produktow:<br><small>Sortuj według 
 				<form method=POST>
@@ -69,7 +70,16 @@
 		<?php 
 			$il++;
 		endforeach ?>
-		
+	
+	<?php } ?>
+	<?php if($check == false) { ?>
+		<tr bgcolor=#505050>
+			<td colspan=3 style=color:#fff;>Komunikat</td>
+		 </tr>
+		 <tr bgcolor=#D4C0A1>
+			<td colspan=3>Brak produktow w sklepie.</td>
+		 </tr>
+	<?php } ?>
 		<tr>
 			<td><a href=index.php>Wróć</a></td>
 		</tr>

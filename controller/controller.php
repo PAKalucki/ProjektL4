@@ -33,7 +33,6 @@ class Controller
 
     public function handleError($e)
     {
-    	// Czyszczenie bufora php
     	ob_clean();
     	
         $str = $e->getMessage() . '<br><br>

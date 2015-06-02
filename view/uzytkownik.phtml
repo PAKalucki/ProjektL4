@@ -13,12 +13,17 @@
 			<td style=color:#fff;>Miasto</td>
 			<td style=color:#fff;>Akcja</td>
 		</tr>
-		
+	<?php if($check == true) { ?>
 		<?php foreach($result as $x): ?>
 			<tr bgcolor=#F1E0C6><td><?php echo $x['ID_klienta'] ?></td><td><?php echo $x['login'] ?></td><td><?php echo $x['haslo'] ?></td><td><?php echo $x['imie'] ?></td><td><?php echo $x['nazwisko'] ?></td><td><?php echo $x['miasto'] ?></td>
 			<td><small><a href=?url=uzytkownik&page=edytuj&id=<?php echo $x['ID_klienta'] ?>>Edytuj</a></small> | <small><a href=?url=uzytkownik&page=usun&id=<?php echo $x['ID_klienta'] ?>>Usun</a></small></td></tr>
 		<?php endforeach ?>
-		
+	<?php } ?>	
+	<?php if($check == false) { ?>
+		<tr bgcolor=#D4C0A1>
+			<td colspan=7>Brak uzytkownikow w sklepie.</td>
+		 </tr>
+	<?php } ?>	
 		<tr>
 			<td><a href=index.php?url=profil>Wróć</a></td>
 		</tr>

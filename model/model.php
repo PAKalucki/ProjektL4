@@ -17,7 +17,7 @@ abstract class Model extends Controller
 		include __DIR__ . '/../view/footer.phtml';
 	}
 	
-	public function sql_query($query) /*juz niepotrzebna ~przemek*/
+	public function sql_query($query)
 	{
 		$ret = array();
 		$result = mysql_query($query);
@@ -84,6 +84,33 @@ abstract class Model extends Controller
 		}
 		else
 			throw new Exception('Nie można połączyć się z bazą danych.');
+	}
+	
+	public function sendMail($email, $subject, $body)
+	{
+		require("configuration.php");
+		require("controller/phpmailer/class.phpmailer.php");
+		
+		$mail = new PHPMailer();
+		$mail->PluginDir = "controller/phpmailer/";
+		$mail->From = $MAIL['address'];
+		$mail->FromName = "Sklep-intern";
+		$mail->Host = "smtp.wp.pl";
+		$mail->Port = 465;
+		$mail->Mailer = "smtp";
+		$mail->Username = "sklep-intern"; 
+		$mail->Password = "projekt2015"; 
+		$mail->SMTPAuth = true;
+		$mail->SetLanguage("pl", "phpmailer/language/");
+		$mail->Subject = $subject;
+		$mail->MsgHTML($body);
+		$mail->AddAddress($email,"Klient");
+
+		if(!$mail->Send())
+			echo $mail->ErrorInfo."<br>";
+
+		$mail->ClearAddresses();
+		$mail->ClearAttachments();
 	}
 }
 ?>

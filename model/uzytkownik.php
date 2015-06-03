@@ -31,9 +31,9 @@ class uzytkownik_Model extends Model
 		{
 			$check = false;
 			$result2 = $this->sql_query("SELECT * FROM `klient`");
-			if(count($result2[0]) > 0)
+			if($result = $this->sql_query("SELECT * FROM `klient`"))
 			{
-				$result = $this->sql_query("SELECT * FROM `klient`");
+				//$result = $this->sql_query("SELECT * FROM `klient`");
 				$check = true;
 			}
 			include "/../view/uzytkownik.phtml";
@@ -91,10 +91,19 @@ class uzytkownik_Model extends Model
 				}
 				else if(isset($_POST['edytuj']))
 				{
+					
 					if($_POST['login'] == '' || $_POST['haslo'] == '' || $_POST['imie'] == '' || $_POST['nazwisko'] == '' || $_POST['miasto'] == '' || $_POST['kod_pocztowy'] == '' || $_POST['ulica'] == '' || $_POST['nr_domu'] == '' || $_POST['email'] == '')
 						$this->redirect("index.php?url=uzytkownik", "error", "Wprowadz wszystkie dane poprawnie.");
 					else if($_POST['login'] == '' || $_POST['haslo'] == '')
 						$this->redirect("index.php?url=uzytkownik", "error", "Wprowadz poprawnie login i haslo.");
+					else if(strlen($_POST['imie']) > 15 || !preg_match('@^[a-zA-Z]{3,20}$@', $_POST['imie']))
+						$this->redirect("index.php?url=uzytkownik", "error", "Podane imiê jest nieprawidlowe!"); 
+					else if(strlen($_POST['nazwisko']) > 30 || !preg_match('@^[a-zA-Z]{2,40}$@', $_POST['nazwisko']))
+						$this->redirect("index.php?url=uzytkownik", "error", "Podane nazwisko jest nieprawidlowe!");
+					else if(strlen($_POST['email']) > 30 || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
+						$this->redirect("index.php?url=uzytkownik", "error", "Adres e-mail jest nieprawidlowy!");
+					else if(strlen($_POST['telefon']) > 20 || !preg_match('@^[0-9]{6,20}$@', $_POST['telefon']))
+						$this->redirect("index.php?url=uzytkownik", "error", "Numer telefonu jest nieprawidlowy!");
 					else
 					{
 						mysql_query("UPDATE klient SET imie = '".$_POST['imie']."', nazwisko = '".$_POST['nazwisko']."', miasto = '".$_POST['miasto']."', kod_pocztowy = '".$_POST['kod_pocztowy']."', ulica = '".$_POST['ulica']."', nr_domu = '".$_POST['nr_domu']."', nr_lokalu = '".$_POST['nr_lokalu']."', telefon = '".$_POST['telefon']."', email = '".$_POST['email']."', login = '".$_POST['login']."', haslo = '".$_POST['haslo']."', data_modyfikacji = '".time()."' WHERE ID_klienta = '".addslashes($_GET['id'])."'"); 

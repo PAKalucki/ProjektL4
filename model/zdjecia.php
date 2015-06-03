@@ -15,7 +15,7 @@ class zdjecia_Model extends Model
 	public function show()
 	{
 		$result = $this->sql_query("SELECT * FROM zdjecia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");
-		include "/../view/zdjecia.phtml";
+		include "view/zdjecia.phtml";
 	}
 }
 ?>

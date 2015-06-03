@@ -39,7 +39,7 @@ class koszyk_Model extends Model
 			$this->redirect("index.php?url=produkt", "error", "Zaloguj sie aby zobaczyc swoj koszyk.");
 
 		
-		include "/../view/koszyk.phtml";
+		include "view/koszyk.phtml";
 	}
 	
 	public function dodaj()
@@ -109,7 +109,7 @@ class koszyk_Model extends Model
 						
 					}
 				}
-				include "/../view/koszyk_zamow.phtml";
+				include "view/koszyk_zamow.phtml";
 			}
 			else if(isset($_POST['zamow_potwierdz']))
 			{
@@ -119,6 +119,8 @@ class koszyk_Model extends Model
 					{
 						$y="ilosc";
 						$z=$y.$i;
+						//$query = $this->sql_query("SELECT * FROM produkt WHERE ID_produktu = ".$_SESSION['koszyk'][$i]."");
+						//if($query[0]['ilosc_produktow]')
 						if($this->isAdmin())
 							mysql_query("INSERT INTO zamowienie VALUES (NULL, '".$this->getLoggedAdminId()."', 'p', '".time()."', NULL, NULL, NULL, NULL, NULL, '".$_POST['dostawa']."', '".$_POST['platnosc']."', NULL)");
 						else

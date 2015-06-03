@@ -12,11 +12,18 @@
 		  </tr>
 		  <tr bgcolor=#D4C0A1>
 			<td>Cena obowiazuje od: </td>
-			<td><?php echo $this->produkty['obowiazuje_od']; ?></td>
+			<td><?php echo date('Y-m-d', $this->produkty['obowiazuje_od']); ?></td>
 		  </tr>
 		  <tr bgcolor=#F1E0C6>
 			<td>Cena obowiazuje do: </td>
-			<td><?php echo $this->produkty['obowiazuje_do']; ?></td>
+			<td>
+				<?php if($this->produkty['obowiazuje_do'] == NULL) { ?>
+					Cena obecnie obowiązuje
+				<?php } ?>
+				<?php if($this->produkty['obowiazuje_do'] != NULL) { ?>
+					<?php echo $this->produkty['obowiazuje_do']; ?>
+				<?php } ?>
+			</td>
 		  </tr>
 		  <tr bgcolor=#D4C0A1>
 			<td>Cena sprzedazy: </td>
@@ -38,9 +45,17 @@
 			<td>Ilosc produktu na magazynie: </td>
 			<td><?php echo $this->produkty['ilosc_produktow']; ?></td>
 		  </tr>
-		  <tr bgcolor=#F1E0C6 align=center>
-			<td colspan=2><a href="?url=koszyk&page=dodaj&id=<?php echo $this->produkty['ID_produktu']; ?>"><b>DODAJ DO KOSZYKA</b></a></td>					
-		  </tr>
+		  
+		    <?php if($this->produkty['ilosc_produktow'] > 0) { ?>
+			  <tr bgcolor=#F1E0C6 align=center>
+				<td colspan=2><a href="?url=koszyk&page=dodaj&id=<?php echo $this->produkty['ID_produktu']; ?>"><b>DODAJ DO KOSZYKA</b></a></td>					
+			  </tr>
+			<?php } ?>
+			<?php if($this->produkty['ilosc_produktow'] <= 0) { ?>
+			  <tr bgcolor=#F1E0C6 align=center>
+				<td colspan=2><b>Tego produktu jest zbyt malo w Naszym magazynie. <br>Skontaktuj się z pracownikiem sklepu.</b></td>					
+			  </tr>
+			<?php } ?>
 		  
 			<tr bgcolor=#D4C0A1 align=center>
 				<td colspan=2><a href="index.php?url=zdjecia&id=<?php echo $this->produkty['ID_produktu']; ?>"><img src="uploads/<?php echo $this->produkty['zdjecie']; ?>"  width="240" height="240"></a></td>

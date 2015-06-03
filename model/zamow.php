@@ -41,7 +41,7 @@ class koszyk_Model extends Model
 			$this->redirect("index.php?url=produkt", "error", "Zaloguj sie aby zobaczyc szczegoly wybranego produktu.");
 
 		
-		include "/../view/koszyk.phtml";
+		include "view/koszyk.phtml";
 	}
 	
 	public function dodaj()

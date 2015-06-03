@@ -57,12 +57,12 @@ class kontakt_Model extends Model
 			{
 				$check = false;
 				$result2 = $this->sql_query("SELECT * FROM klient");
-				if(count($result2[0]) > 0)
+				if($result = $this->sql_query("SELECT * FROM klient"))
 				{		
-					$result = $this->sql_query("SELECT * FROM klient");
+					//$result = $this->sql_query("SELECT * FROM klient");
 					$check = true;
 				}
-				include "/../view/kontakt_wiadomosc.phtml";
+				include "view/kontakt_wiadomosc.phtml";
 			}
 			else if(isset($_POST['wyslij_wiadomosc']))
 			{
@@ -89,11 +89,11 @@ class kontakt_Model extends Model
 				$check = false;
 				$date = date('Y-m-d', time());
 				$checkedDate = strtotime("-7 days", strtotime($date));
-				$result2 = $this->sql_query("SELECT * FROM zamowienie WHERE data_wystawienia < ".$checkedDate." AND status = 'p'");				
+				//$result2 = $this->sql_query("SELECT * FROM zamowienie WHERE data_wystawienia < ".$checkedDate." AND status = 'p'");				
 				
-				if(count($result2[0]) > 0)
+				if($result = $this->sql_query("SELECT * FROM zamowienie z, klient k WHERE z.data_wystawienia < ".$checkedDate." AND z.status = 'p' AND z.KLIENT_ID_klienta = k.ID_klienta"))
 				{	
-					$result = $this->sql_query("SELECT * FROM zamowienie z, klient k WHERE z.data_wystawienia < ".$checkedDate." AND z.status = 'p' AND z.KLIENT_ID_klienta = k.ID_klienta");
+					//$result = $this->sql_query("SELECT * FROM zamowienie z, klient k WHERE z.data_wystawienia < ".$checkedDate." AND z.status = 'p' AND z.KLIENT_ID_klienta = k.ID_klienta");
 					$check = true;
 				}
 				include "/../view/kontakt_przypomnienie.phtml";

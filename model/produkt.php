@@ -57,7 +57,7 @@ class produkt_Model extends Model
 				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' and grupa_wiekowa = '".$_POST['sortuj_w']."'  ORDER BY grupa_produktow, grupa_wiekowa ASC");
 			$check = true;
 		}
-		include "/../view/produkt.phtml";
+		include "view/produkt.phtml";
 	}
 	public function dodaj()
 	{

@@ -23,7 +23,7 @@ class raport_Model extends Model
 	public function show()
 	{
 		
-		include "/../view/raport.phtml";
+		include "view/raport.phtml";
 	}
 	
 	public function faktury()

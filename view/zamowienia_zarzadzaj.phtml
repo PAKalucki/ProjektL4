@@ -2,10 +2,10 @@
 <form method="post">
 	<table style="width: 900px;" cellpadding=4 cellspacing=1 align=center>
 		<tr bgcolor=#505050>
-			<td colspan=8 style=color:#fff;><b>Zarzadzaj zamowieniami:</b></td>
+			<td colspan=9 style=color:#fff;><b>Zarzadzaj zamowieniami:</b></td>
 		 </tr>
 		 <tr bgcolor=#505050>
-			<td colspan=8 style=color:#fff;><b>Wszystkie transakcje:</b></td>
+			<td colspan=9 style=color:#fff;><b>Wszystkie transakcje:</b></td>
 		 </tr>
 		 <tr bgcolor=#505050>
 			<td style=color:#fff;>Login klienta</td>
@@ -16,6 +16,7 @@
 			<td style=color:#fff;>Opcja platnosci</td>
 			<td style=color:#fff;>Ilosc sztuk</td>
 			<td style=color:#fff;>Cena calkowita</td>
+			<td style=color:#fff;>Akcja</td>
 		 </tr>
 		 
 	<?php if($check == true) { ?>
@@ -84,6 +85,7 @@
 				<td><?php echo $pl; ?></td>
 				<td><?php echo $x['ilosc_sztuk']; ?></td>
 				<td><?php echo $suma; ?>zl</td>
+				<td><a href="index.php?url=zamowienia&page=pokaz&id=<?php echo $x['ID_zamowienia']; ?>">POKAŻ SZCZEGÓŁY</a></td>
 			</tr>
 		 <?php 
 		 $i++;
@@ -92,7 +94,7 @@
 		
 		
 		 <tr bgcolor=#505050>
-			<td colspan=8 style=color:#fff;><b>Produkty gotowe do wyslania:</b></td>
+			<td colspan=9 style=color:#fff;><b>Produkty gotowe do wyslania:</b></td>
 		 </tr>	
 		 
 
@@ -119,6 +121,16 @@
 				break;
 			}
 			
+			switch($x['opcja_platnosci'])
+			{
+				case "p":
+					$pl = "Paragon";
+				break;
+				case "f":
+					$pl = "Faktura";
+				break;
+			}
+			
 			if(($i % 2) == 0)
 				$kolor = '#D4C0A1';
 			else
@@ -127,9 +139,10 @@
 		 ?>
 			<input type=text name=id hidden value=<?php echo $x['ID_zamowienia']; ?>>
 			<tr bgcolor=<?php echo $kolor; ?>>
-				<td colspan=7>
+				<td colspan=8>
 					Klient <b><?php echo $x['imie']; ?> <?php echo $x['nazwisko']; ?></b> dokonal oplaty za zamowiony przedmiot <b><?php echo $x['nazwa_produktu']; ?></b>.</br>
-					Rodzaj przesylki: <b><?php echo $do; ?></b>
+					Rodzaj przesylki: <b><?php echo $do; ?></b></br>
+					Opcja platności: <b><?php echo $pl; ?></b>
 				</td>
 				<td><button class="button" name="wyslij">Wyslij produkt</button></td>
 			</tr>
@@ -140,7 +153,7 @@
 		 
 		 <?php if($wy == false) { ?>
 			 <tr bgcolor=#D4C0A1>
-				<td colspan=8>Brak gotowych produktow do wyslania.</td>
+				<td colspan=9>Brak gotowych produktow do wyslania.</td>
 			</tr>
 		<?php } ?>
 
@@ -148,7 +161,7 @@
 
 <form method="post">
 		 <tr bgcolor=#505050>
-			<td colspan=8 style=color:#fff;><b>Zwroty produktow:</b></td>
+			<td colspan=9 style=color:#fff;><b>Zwroty produktow:</b></td>
 		 </tr>
 		 <?php 
 		 if($zw == true) {
@@ -178,7 +191,7 @@
 		 ?>
 			<input type=text name=id hidden value=<?php echo $x['ID_zamowienia']; ?>>
 			<tr bgcolor=<?php echo $kolor; ?>>
-				<td colspan=7>
+				<td colspan=8>
 					Klient <b><?php echo $y['imie']; ?> <?php echo $y['nazwisko']; ?></b> zlozyl prosbe o zwrot pieniedzy za zakupiony produkt (do czego ma prawo przez 30 dni od zakupu) <b><?php echo $y['nazwa_produktu']; ?></b>, <b><?php echo $y['ilosc_sztuk']; ?> sztuk</b>.</br>
 					Cena zakupionego produktu: <b><?php echo $suma; ?>zl</b>
 				</td>
@@ -190,13 +203,13 @@
 		<?php } ?>
 		<?php if($zw == false) { ?>
 			 <tr bgcolor=#D4C0A1>
-				<td colspan=8>Brak zwortow do zaakceptowania.</td>
+				<td colspan=9>Brak zwortow do zaakceptowania.</td>
 			</tr>
 		<?php } ?>
 	<?php } ?> 
 	<?php if($check == false) { ?>
 		<tr bgcolor=#D4C0A1>
-			<td colspan=8>Brak zamowien w sklepie.</td>
+			<td colspan=9>Brak zamowien w sklepie.</td>
 		</tr>
 	<?php } ?> 	
 	

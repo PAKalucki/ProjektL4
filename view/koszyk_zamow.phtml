@@ -15,10 +15,23 @@
 			?>
 				<input type=text name="platnosc" hidden value=<?php echo $_POST['platnosc']; ?>>
 				<input type=text name="dostawa" hidden value=<?php echo $_POST['dostawa']; ?>>
-				<input type=text name=<?php echo $z; ?> hidden value=<?php echo $_POST[$z]; ?>>
+				
+				<?php if(($x['ilosc_produktow']-$_POST[$z]) < 0) { ?>
+					<input type=text name=<?php echo $z; ?> hidden value=<?php echo $x['ilosc_produktow']; ?>>
+					<?php $ilosc = $x['ilosc_produktow']; ?>
+				<?php } ?>
+				
+				<?php if(($x['ilosc_produktow']-$_POST[$z]) >= 0) { ?>
+					<input type=text name=<?php echo $z; ?> hidden value=<?php echo $_POST[$z]; ?>>		
+					<?php $ilosc = $_POST[$z]; ?>
+					
+				<?php } ?>
 				<tr bgcolor=<?php echo $kolor; ?>>
 					<td>
-						Czy chcesz zamowic <b><?php echo $x['nazwa_produktu']; ?></b> (ilosc sztuk: <?php echo $_POST[$z]; ?>) za <?php echo $x['cena_sprzedazy']; ?>zl (w sumie <?php echo $suma; ?>zl)?
+						<?php if(($x['ilosc_produktow']-$_POST[$z]) < 0) { ?>
+							<b>Wybrany produkt na magazynie jest w ilosci <?php echo $x['ilosc_produktow']; ?> a chcesz zamówić w ilości <?php echo $_POST[$z]; ?>. W związku z tym zamówienie możesz złożyć <u>tylko</u> na liczbę produktów znajdujących się w magazynie.</b></br></br>
+						<?php } ?>
+						Czy chcesz zamowic <b><?php echo $x['nazwa_produktu']; ?></b> (ilosc sztuk: <?php echo $ilosc; ?>) za <?php echo $x['cena_sprzedazy']; ?>zl (w sumie <?php echo $suma; ?>zl)?
 					</td>
 				</tr>
 			<?php } ?>

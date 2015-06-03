@@ -48,18 +48,24 @@ class zamowienia_Model extends Model
 		if($ch == true)
 			$result = $this->sql_query("SELECT * FROM zamowienie z, pozycja_zamowienia pz, produkt p, produkt_cena pc WHERE z.KLIENT_ID_klienta = ".$this->getLoggedClientId()." AND z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND pz.PRODUKT_ID_produktu = p.ID_produktu AND p.ID_produktu = pc.PRODUKT_ID_produktu");	
 		
-		include "/../view/zamowienia.phtml";
+		include "view/zamowienia.phtml";
 	}
 	
 	public function pokaz()
 	{
 		if(isset($_GET['id']))
 		{
-			if($this->isLogged())
+			if($this->isClient())
 			{
 				$result = $this->sql_query("SELECT * FROM klient k, zamowienie z, pozycja_zamowienia pz, produkt p, produkt_cena pc WHERE k.ID_klienta = ".$this->getLoggedClientId()." AND k.ID_klienta = z.KLIENT_ID_klienta AND z.ID_zamowienia = ".$_GET['id']." AND z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND pz.PRODUKT_ID_produktu = p.ID_produktu AND p.ID_produktu = pc.PRODUKT_ID_produktu");
 				return $result[0];
 			}
+			else if($this->isAdmin())
+			{
+				$result = $this->sql_query("SELECT * FROM zamowienie z, pozycja_zamowienia pz, produkt p, produkt_cena pc WHERE z.ID_zamowienia = ".$_GET['id']." AND z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND pz.PRODUKT_ID_produktu = p.ID_produktu AND p.ID_produktu = pc.PRODUKT_ID_produktu");
+				return $result[0];
+			}
+			
 			else
 				$this->redirect("index.php?url=zamowienia", "error", "Zaloguj sie aby zobaczyc szczegoly swojego zamowienia.");
 		}
@@ -90,8 +96,8 @@ class zamowienia_Model extends Model
 		if($this->isAdmin())
 		{
 			$check = false;
-			$result = $this->sql_query("SELECT * FROM zamowienie z, pozycja_zamowienia pz, produkt p, produkt_cena pc, klient k WHERE k.ID_klienta = z.KLIENT_ID_klienta AND z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND pz.PRODUKT_ID_produktu = p.ID_produktu AND p.ID_produktu = pc.PRODUKT_ID_produktu");
-			if(count($result) > 0)
+			//$result = $this->sql_query("SELECT * FROM zamowienie z, pozycja_zamowienia pz, produkt p, produkt_cena pc, klient k WHERE k.ID_klienta = z.KLIENT_ID_klienta AND z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND pz.PRODUKT_ID_produktu = p.ID_produktu AND p.ID_produktu = pc.PRODUKT_ID_produktu");
+			if($result = $this->sql_query("SELECT * FROM zamowienie z, pozycja_zamowienia pz, produkt p, produkt_cena pc, klient k WHERE k.ID_klienta = z.KLIENT_ID_klienta AND z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND pz.PRODUKT_ID_produktu = p.ID_produktu AND p.ID_produktu = pc.PRODUKT_ID_produktu"))
 			{
 				$wy = false;
 				for($k=0; $k < count($result); $k++) {
@@ -126,7 +132,7 @@ class zamowienia_Model extends Model
 				$check=true;
 			}
 		
-			include "/../view/zamowienia_zarzadzaj.phtml";
+			include "view/zamowienia_zarzadzaj.phtml";
 		}
 	}
 	

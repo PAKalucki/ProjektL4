@@ -438,7 +438,7 @@ class poz_zamowienia extends Model{
     }
     
     public function deletePozycja($id){
-        $user = Model::factory('poz_zamowienia')->find_one($id);
+        $user = Model::factory('poz_zamowienia')->where('ZAMOWIENIE_ID_zamowienia',$id)->find_one($id);
         $user->delete();  
     }
 }

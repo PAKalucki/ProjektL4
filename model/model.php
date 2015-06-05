@@ -1,6 +1,6 @@
 <?php
-
-abstract class Model extends Controller
+date_default_timezone_set('Europe/Warsaw');
+abstract class ModelClass extends Controller
 {
 	protected $mysql;
 	
@@ -17,20 +17,6 @@ abstract class Model extends Controller
 		include __DIR__ . '/../view/footer.phtml';
 	}
 	
-	public function sql_query($query)
-	{
-		$ret = array();
-		$result = mysql_query($query);
-		while ($row = mysql_fetch_array($result, MYSQL_BOTH))
-			$ret[] = $row;
-		
-		if (!$ret)
-			return false; 
-		
-		mysql_free_result($result);
-		
-		return $ret;
-	}
 	
 	public function isLogged()
 	{	
@@ -51,9 +37,13 @@ abstract class Model extends Controller
 	{
 		if($this->isLogged() and isset($_SESSION['id_klienta']))
 		{
-			$client = $this->sql_query("SELECT * FROM `klient` WHERE `ID_klienta`='".$_SESSION['id_klienta']."'");
-			if($client)
+			#$client = $this->sql_query("SELECT * FROM `klient` WHERE `ID_klienta`='".$_SESSION['id_klienta']."'");
+                        
+                        if(klient::findKlient($_SESSION['id_klienta']))
+                        {
 				return true;
+                        }
+
 		}
 		return false;
 	}
@@ -62,8 +52,8 @@ abstract class Model extends Controller
 	{
 		if($this->isLogged() and isset($_SESSION['id_pracownika']))
 		{
-			$admin = $this->sql_query("SELECT * FROM `pracownik` WHERE `ID_pracownika`='".$_SESSION['id_pracownika']."'");
-			if($admin)
+			#$admin = $this->sql_query("SELECT * FROM `pracownik` WHERE `ID_pracownika`='".$_SESSION['id_pracownika']."'");
+			if($admin=pracownik::findPracownik($_SESSION['id_pracownika']))
 				return true;
 		}
 		return false;
@@ -112,5 +102,7 @@ abstract class Model extends Controller
 		$mail->ClearAddresses();
 		$mail->ClearAttachments();
 	}
+        
+
 }
 ?>

@@ -137,7 +137,7 @@ INSERT INTO `pozycja_zamowienia` (`ID_linii_zamowienia`, `ZAMOWIENIE_ID_zamowien
 --
 
 CREATE TABLE IF NOT EXISTS `pracownik` (
-  `ID_pracownika` int(5) NOT NULL,
+  `ID_pracownika` int(5) NOT NULL AUTO_INCREMENT,
   `imie` varchar(30) NOT NULL,
   `nazwisko` varchar(30) NOT NULL,
   `telefon` int(15) NOT NULL,

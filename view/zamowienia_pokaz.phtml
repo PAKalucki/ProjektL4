@@ -126,13 +126,13 @@
 				</tr>
 		<?php } ?>
 		
-		<?php if($this->zamowienie['data_oplacenia'] == 0 and !$this->isAdmin())
+		<?php if($this->zamowienie['data_oplacenia'] == 0)
 		{ ?>
 				<tr bgcolor=#505050>
 					<td colspan=2><a style=color:#fff href="?url=zamowienia&page=platnosc&id=<?php echo $this->zamowienie['ID_zamowienia']; ?>">Dokonaj platnosci</a></td>
 		<?php } ?>
 		
-		<?php if($this->zamowienie['data_zwrotu'] == 0 and $this->zamowienie['status'] != "p" and $this->zamowienie['data_wyslania'] != 0 and !$this->isAdmin())
+		<?php if($this->zamowienie['data_zwrotu'] == 0 and $this->zamowienie['status'] != "p" and $this->zamowienie['data_wyslania'] != 0)
 		{ ?>
 
 			<tr bgcolor=#505050>

@@ -16,7 +16,8 @@
 		</tr>
 		
 		<?php for($i=0; $i < count($_SESSION['koszyk']); $i++) { ?>
-			<?php while($x = mysql_fetch_array($result[$i])) { 
+                        <?php $x=$result[$i]; ?>
+			<?php  
 				if(($i % 2) == 0)
 					$kolor = '#D4C0A1';
 				else
@@ -34,7 +35,6 @@
 					<td><input type="number" name=<?php echo $z; ?> min="1" value="1" style="width:30px;"></td>
 					<td><a href="index.php?url=koszyk&page=usun&id=<?php echo $x['ID_produktu']; ?>">USUN</a></td>
 				</tr>
-			<?php } ?>
 		<?php } ?>
 			<?php if(count($_SESSION['koszyk']) == 0) { ?>
 				<tr bgcolor=#D4C0A1 align=center>

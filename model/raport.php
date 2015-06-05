@@ -1,7 +1,7 @@
 <?php
 include_once("model/model.php"); 
 
-class raport_Model extends Model 
+class raport_Model extends ModelClass 
 {
 	public $raport = false;
 
@@ -23,14 +23,15 @@ class raport_Model extends Model
 	public function show()
 	{
 		
-		include "view/raport.phtml";
+		include "/../view/raport.phtml";
 	}
 	
 	public function faktury()
 	{
 		require('pdf/fpdf.php');
-		$result=mysql_query("select * from zamowienie z, pozycja_zamowienia pz, produkt p, klient k, produkt_cena pc WHERE z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND p.ID_produktu = pz.PRODUKT_ID_produktu AND k.ID_klienta = z.KLIENT_ID_klienta AND p.ID_produktu = pc.PRODUKT_ID_Produktu ORDER BY z.ID_zamowienia ASC");
-		$number_of_products = mysql_numrows($result);
+		#$result=mysql_query("select * from zamowienie z, pozycja_zamowienia pz, produkt p, klient k, produkt_cena pc WHERE z.ID_zamowienia = pz.ZAMOWIENIE_ID_zamowienia AND p.ID_produktu = pz.PRODUKT_ID_produktu AND k.ID_klienta = z.KLIENT_ID_klienta AND p.ID_produktu = pc.PRODUKT_ID_Produktu ORDER BY z.ID_zamowienia ASC");
+		$result = zamowienie::findZamowienieRaport();
+                $number_of_products = count($result);
 
 		$tile = array();
 		$rodzaj = array();
@@ -45,8 +46,9 @@ class raport_Model extends Model
 		$ilosc = array();
 		$cena = array();
 
-		while($row = mysql_fetch_array($result))
+		for($i=0;$i<$number_of_products;$i++)
 		{
+                        $row = $result[$i];
 			$tile[] = $row['ID_zamowienia'];
 			$data_wystawienia[] = $row['data_wystawienia'];
 			$nabywca[] = $row['imie'].' '.$row['nazwisko'];
@@ -83,17 +85,13 @@ class raport_Model extends Model
 		}
 		
 		$pracownik="";
-		$query = mysql_query("SELECT * FROM pracownik WHERE ID_pracownika = ".$this->getLoggedAdminId()."");
-		while($x = mysql_fetch_array($query))
-		{
-			$pracownik = $x['imie'].' '.$x['nazwisko'];
-		}
-		mysql_close();
-
+		#$query = mysql_query("SELECT * FROM pracownik WHERE ID_pracownika = ".$this->getLoggedAdminId()."");
+                $query = pracownik::findPracownik($this->getLoggedAdminId())->as_array();
+		$pracownik = $query['imie'].' '.$query['nazwisko'];
 
 		$pdf=new FPDF();
 		
-		$i = 0;
+		
 		for($i=0; $i<$number_of_products; $i++)
 		{
 			$pdf->AddPage();
@@ -102,7 +100,7 @@ class raport_Model extends Model
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->Cell(150);
-			$pdf->Cell(0, 6, 'Miejscowosc: Rzeszów',0,0,'R',0);
+			$pdf->Cell(0, 6, 'Miejscowosc: Rzeszï¿½w',0,0,'R',0);
 			$pdf->Cell(0, 12, 'Data wystawienia: '.date('Y-m-d', $data_wystawienia[$i]),0,0,'R',0);
 			$pdf->Ln(10);
 			

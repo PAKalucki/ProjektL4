@@ -1,7 +1,7 @@
 <?php
 include_once("model/model.php"); 
 
-class uzytkownik_Model extends Model 
+class uzytkownik_Model extends ModelClass 
 {
 	public $zarzadzaj = false;
 
@@ -30,10 +30,10 @@ class uzytkownik_Model extends Model
 		if($this->isAdmin())
 		{
 			$check = false;
-			$result2 = $this->sql_query("SELECT * FROM `klient`");
-			if($result = $this->sql_query("SELECT * FROM `klient`"))
+		
+			if($result=klient::allKlient())
 			{
-				//$result = $this->sql_query("SELECT * FROM `klient`");
+				
 				$check = true;
 			}
 			include "/../view/uzytkownik.phtml";
@@ -47,13 +47,20 @@ class uzytkownik_Model extends Model
 			{
 				if(isset($_POST['usun']))
 				{
-					$query1 = mysql_query("SELECT * FROM `zamowienie` WHERE `KLIENT_ID_klienta`='".addslashes($_GET['id'])."'"); 
-					while($x = mysql_fetch_array($query1))
-					{
-						mysql_query("DELETE FROM `pozycja_zamowienia` WHERE `ZAMOWIENIE_ID_zamowienia` = '".$x['ID_zamowienia']."'");
-						mysql_query("DELETE FROM `zamowienie` WHERE `KLIENT_ID_klienta` = ".$_GET['id']."");
-					}
-					mysql_query("DELETE FROM `klient` WHERE `ID_klienta` = ".$_GET['id']."");
+					#$query1 = mysql_query("SELECT * FROM `zamowienie` WHERE `KLIENT_ID_klienta`='".addslashes($_GET['id'])."'"); 
+					$query1 = zamowienie::findZamowienieIDKlienta($_GET['id']);
+                                    for($i=0;$i<count($query1);$i++)
+					{       
+                                                $x = $query1[$i];
+						#mysql_query("DELETE FROM `pozycja_zamowienia` WHERE `ZAMOWIENIE_ID_zamowienia` = '".$x['ID_zamowienia']."'");
+						poz_zamowienia::deletePozycja($x['ID_zamowienia']);
+                                                #mysql_query("DELETE FROM `zamowienie` WHERE `KLIENT_ID_klienta` = ".$_GET['id'].""); czemu to tez jest w petli?
+                                                
+                                                
+                                        }
+                                        zamownie::deleteZamownieKlienta($_GET['id']);
+					#mysql_query("DELETE FROM `klient` WHERE `ID_klienta` = ".$_GET['id']."");
+                                        klient::deleteKlient($_GET['id']);
 					$this->redirect("index.php?url=uzytkownik", "error", "Klient zostal poprawnie usuniety z bazy danych.");
 				}	
 			}
@@ -62,13 +69,17 @@ class uzytkownik_Model extends Model
 		{
 			if(isset($_POST['usun']))
 			{
-				$query1 = mysql_query("SELECT * FROM `zamowienie` WHERE `KLIENT_ID_klienta`='".$this->getLoggedClientId()."'"); 
-				while($x = mysql_fetch_array($query1))
-				{
-					mysql_query("DELETE FROM `pozycja_zamowienia` WHERE `ZAMOWIENIE_ID_zamowienia` = '".$x['ID_zamowienia']."'");
-					mysql_query("DELETE FROM `zamowienie` WHERE `KLIENT_ID_klienta` = ".$this->getLoggedClientId()."");
+				#$query1 = mysql_query("SELECT * FROM `zamowienie` WHERE `KLIENT_ID_klienta`='".$this->getLoggedClientId()."'"); 
+				$query1 = zamowienie::findZamowienieIDKlienta($this->getLoggedClientId());
+                            for($i=0;$i<count($query1);$i++)
+				{       $x=$query1[0];
+					#mysql_query("DELETE FROM `pozycja_zamowienia` WHERE `ZAMOWIENIE_ID_zamowienia` = '".$x['ID_zamowienia']."'");
+					poz_zamowienia::deletePozycja($x['ID_zamowienia']);
+                                #mysql_query("DELETE FROM `zamowienie` WHERE `KLIENT_ID_klienta` = ".$this->getLoggedClientId()."");
 				}
-				mysql_query("DELETE FROM `klient` WHERE `ID_klienta` = ".$this->getLoggedClientId()."");
+                                zamowienie::deleteZamownieKlienta($this->getLoggedClientId());
+				#mysql_query("DELETE FROM `klient` WHERE `ID_klienta` = ".$this->getLoggedClientId()."");
+                                klient::deleteKlient($this->getLoggedClientId());
 				unset($_SESSION['koszyk']);
 				session_unset(); 
 				$this->redirect("index.php", "error", "Twoje konto zostalo usuniete z bazy danych.");
@@ -83,31 +94,28 @@ class uzytkownik_Model extends Model
 			{
 				if(!isset($_POST['edytuj']))
 				{
-					$result = $this->sql_query("SELECT * FROM `klient` WHERE `ID_klienta` = '".addslashes($_GET['id'])."' LIMIT 1");
-					if($result)
+					#$result = $this->sql_query("SELECT * FROM `klient` WHERE `ID_klienta` = '".addslashes($_GET['id'])."' LIMIT 1");
+					$result=klient::findKlient($_GET['id'])->as_array();
+                                    if($result)
 					{
-						return $result[0];
+						return $result;
 					}
 				}
 				else if(isset($_POST['edytuj']))
 				{
-					
 					if($_POST['login'] == '' || $_POST['haslo'] == '' || $_POST['imie'] == '' || $_POST['nazwisko'] == '' || $_POST['miasto'] == '' || $_POST['kod_pocztowy'] == '' || $_POST['ulica'] == '' || $_POST['nr_domu'] == '' || $_POST['email'] == '')
 						$this->redirect("index.php?url=uzytkownik", "error", "Wprowadz wszystkie dane poprawnie.");
 					else if($_POST['login'] == '' || $_POST['haslo'] == '')
 						$this->redirect("index.php?url=uzytkownik", "error", "Wprowadz poprawnie login i haslo.");
-					else if(strlen($_POST['imie']) > 15 || !preg_match('@^[a-zA-Z]{3,20}$@', $_POST['imie']))
-						$this->redirect("index.php?url=uzytkownik", "error", "Podane imiê jest nieprawidlowe!"); 
-					else if(strlen($_POST['nazwisko']) > 30 || !preg_match('@^[a-zA-Z]{2,40}$@', $_POST['nazwisko']))
-						$this->redirect("index.php?url=uzytkownik", "error", "Podane nazwisko jest nieprawidlowe!");
-					else if(strlen($_POST['email']) > 30 || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
-						$this->redirect("index.php?url=uzytkownik", "error", "Adres e-mail jest nieprawidlowy!");
-					else if(strlen($_POST['telefon']) > 20 || !preg_match('@^[0-9]{6,20}$@', $_POST['telefon']))
-						$this->redirect("index.php?url=uzytkownik", "error", "Numer telefonu jest nieprawidlowy!");
 					else
 					{
-						mysql_query("UPDATE klient SET imie = '".$_POST['imie']."', nazwisko = '".$_POST['nazwisko']."', miasto = '".$_POST['miasto']."', kod_pocztowy = '".$_POST['kod_pocztowy']."', ulica = '".$_POST['ulica']."', nr_domu = '".$_POST['nr_domu']."', nr_lokalu = '".$_POST['nr_lokalu']."', telefon = '".$_POST['telefon']."', email = '".$_POST['email']."', login = '".$_POST['login']."', haslo = '".$_POST['haslo']."', data_modyfikacji = '".time()."' WHERE ID_klienta = '".addslashes($_GET['id'])."'"); 
-						$this->redirect("index.php?url=uzytkownik", "error", "Konto poprawnie zaktualizowane.");
+						#mysql_query("UPDATE klient SET imie = '".$_POST['imie']."', nazwisko = '".$_POST['nazwisko']."', miasto = '".$_POST['miasto']."', 
+                                                #kod_pocztowy = '".$_POST['kod_pocztowy']."', ulica = '".$_POST['ulica']."', 
+                                                #nr_domu = '".$_POST['nr_domu']."', nr_lokalu = '".$_POST['nr_lokalu']."', telefon = '".$_POST['telefon']."', 
+                                                #email = '".$_POST['email']."', login = '".$_POST['login']."', haslo = '".$_POST['haslo']."', data_modyfikacji = '".time()."' WHERE ID_klienta = '".addslashes($_GET['id'])."'"); 
+						$tab=array($_POST['imie'],$_POST['nazwisko'],$_POST['miasto'],$_POST['kod_pocztowy'],$_POST['ulica'],$_POST['nr_domu'],$_POST['nr_lokalu'],$_POST['email'],$_POST['login'],$_POST['haslo'],$_POST['telefon'],date('Y-m-d'),);
+                                                klient::updateKlient($_GET['id'],$tab);
+                                            $this->redirect("index.php?url=uzytkownik", "error", "Konto poprawnie zaktualizowane.");
 					}
 				}
 			}
@@ -116,10 +124,11 @@ class uzytkownik_Model extends Model
 		{
 			if(!isset($_POST['edytuj']))
 			{
-				$result = $this->sql_query("SELECT * FROM `klient` WHERE `ID_klienta` = '".$this->getLoggedClientId()."' LIMIT 1");
-				if($result)
+				#$result = $this->sql_query("SELECT * FROM `klient` WHERE `ID_klienta` = '".$this->getLoggedClientId()."' LIMIT 1");
+				$result = klient::findKlient($this->getLoggedClientId())->as_array();
+                            if($result)
 				{
-					return $result[0];
+					return $result;
 				}
 			}
 			else if(isset($_POST['edytuj']))
@@ -130,8 +139,10 @@ class uzytkownik_Model extends Model
 					$this->redirect("index.php?url=profil", "error", "Wprowadz poprawnie login i haslo.");
 				else
 				{
-					mysql_query("UPDATE klient SET imie = '".$_POST['imie']."', nazwisko = '".$_POST['nazwisko']."', miasto = '".$_POST['miasto']."', kod_pocztowy = '".$_POST['kod_pocztowy']."', ulica = '".$_POST['ulica']."', nr_domu = '".$_POST['nr_domu']."', nr_lokalu = '".$_POST['nr_lokalu']."', telefon = '".$_POST['telefon']."', email = '".$_POST['email']."', login = '".$_POST['login']."', haslo = '".$_POST['haslo']."', data_modyfikacji = '".time()."' WHERE ID_klienta = '".$this->getLoggedClientId()."'"); 
-					$this->redirect("index.php?url=profil", "error", "Konto poprawnie zaktualizowane.");
+					#mysql_query("UPDATE klient SET imie = '".$_POST['imie']."', nazwisko = '".$_POST['nazwisko']."', miasto = '".$_POST['miasto']."', kod_pocztowy = '".$_POST['kod_pocztowy']."', ulica = '".$_POST['ulica']."', nr_domu = '".$_POST['nr_domu']."', nr_lokalu = '".$_POST['nr_lokalu']."', telefon = '".$_POST['telefon']."', email = '".$_POST['email']."', login = '".$_POST['login']."', haslo = '".$_POST['haslo']."', data_modyfikacji = '".time()."' WHERE ID_klienta = '".$this->getLoggedClientId()."'"); 
+					$tab=array($_POST['imie'],$_POST['nazwisko'],$_POST['miasto'],$_POST['kod_pocztowy'],$_POST['ulica'],$_POST['nr_domu'],$_POST['nr_lokalu'],$_POST['email'],$_POST['login'],$_POST['haslo'],$_POST['telefon'],date('Y-m-d'),);
+                                                klient::updateKlient($this->getLoggedClientId(),$tab);
+                                    $this->redirect("index.php?url=profil", "error", "Konto poprawnie zaktualizowane.");
 				}
 			}
 		}	

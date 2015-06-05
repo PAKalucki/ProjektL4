@@ -1,7 +1,7 @@
 <?php
 include_once("model/model.php"); 
 
-class koszyk_Model extends Model 
+class koszyk_Model extends ModelClass 
 {
 	public $koszyk = false;
 
@@ -24,7 +24,7 @@ class koszyk_Model extends Model
 		    	$this->show();
 		}
 	}
-	public function show()
+	public function show() #identyczne jak koszyk.php po co w ogole jest ta klasa??
 	{
 
 		if($this->isLogged())
@@ -33,15 +33,17 @@ class koszyk_Model extends Model
 			{
 				for($i=0; $i < count($_SESSION['koszyk']); $i++)
 				{
-					$result[$i] = mysql_query("SELECT * FROM produkt p, produkt_cena pc WHERE p.ID_produktu = ".$_SESSION['koszyk'][$i]." AND pc.PRODUKT_ID_produktu = p.ID_produktu");	
-				}
+					#$result[$i] = mysql_query("SELECT * FROM produkt p, produkt_cena pc WHERE p.ID_produktu = ".$_SESSION['koszyk'][$i]." AND pc.PRODUKT_ID_produktu = p.ID_produktu");	
+                                    $result[$i] = produkt::findKoszyk($_SESSION['koszyk'][$i])->as_array();
+                                    
+                                }
 			}
 		}
 		else
 			$this->redirect("index.php?url=produkt", "error", "Zaloguj sie aby zobaczyc szczegoly wybranego produktu.");
 
 		
-		include "view/koszyk.phtml";
+		include "/../view/koszyk.phtml";
 	}
 	
 	public function dodaj()

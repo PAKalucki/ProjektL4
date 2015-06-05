@@ -1,7 +1,7 @@
 <?php
 include_once("model/model.php"); 
 
-class produkt_Model extends Model 
+class produkt_Model extends ModelClass 
 {
 	public $produkty = false;
 
@@ -35,31 +35,36 @@ class produkt_Model extends Model
 	}
 	public function show()
 	{
-		$query = $this->sql_query("SELECT * FROM produkt");
+		$query = produkt::allProdukt();
 		$check = false;
 		if(count($query[0])>0)
 		{
-			$sort1 = $this->sql_query("SELECT grupa_produktow FROM produkt GROUP BY grupa_produktow ORDER BY grupa_produktow ASC");	
-			$sort2 = $this->sql_query("SELECT grupa_wiekowa FROM produkt GROUP BY grupa_wiekowa ORDER BY grupa_wiekowa ASC");	
-			
+			#$sort1 = $this->sql_query("SELECT grupa_produktow FROM produkt GROUP BY grupa_produktow ORDER BY grupa_produktow ASC");	
+			#$sort2 = $this->sql_query("SELECT grupa_wiekowa FROM produkt GROUP BY grupa_wiekowa ORDER BY grupa_wiekowa ASC");	
+                        $sort1 = produkt::grupaProdukt1();
+                        $sort2 = produkt::grupaProdukt2();
 			if(isset($_POST['sortuj_k']))
 				$sel_k = $_POST['sortuj_k'];
 			if(isset($_POST['sortuj_w']))
 				$sel_w = $_POST['sortuj_w'];
 			
 			if((!isset($_POST['sortuj_k']) or $_POST['sortuj_k'] == "none") and (!isset($_POST['sortuj_w']) or $_POST['sortuj_w'] == "none"))
-				$result = $this->sql_query("SELECT * FROM produkt");
+				$result = produkt::allProdukt();
 			elseif(isset($_POST['sortuj_k']) and $_POST['sortuj_w'] == "none")
-				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' ORDER BY grupa_produktow ASC");
+                                $result=produkt::sortProdukt($_POST['sortuj_k']);
+				#$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' ORDER BY grupa_produktow ASC");
 			elseif(isset($_POST['sortuj_w']) and $_POST['sortuj_k'] == "none")
-				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_wiekowa = '".$_POST['sortuj_w']."' ORDER BY grupa_wiekowa ASC");
+				$result=produkt::sortWiek($_POST['sortuj_w']);
+                                #$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_wiekowa = '".$_POST['sortuj_w']."' ORDER BY grupa_wiekowa ASC");
 			elseif(isset($_POST['sortuj_w']) and isset($_POST['sortuj_k']))
-				$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' and grupa_wiekowa = '".$_POST['sortuj_w']."'  ORDER BY grupa_produktow, grupa_wiekowa ASC");
+				$result = produkt::sortWiekProdukt($_POST['sortuj_k'],$_POST['sortuj_w']);
+                                #$result = $this->sql_query("SELECT * FROM produkt WHERE grupa_produktow = '".$_POST['sortuj_k']."' and grupa_wiekowa = '".$_POST['sortuj_w']."'  ORDER BY grupa_produktow, grupa_wiekowa ASC");
 			$check = true;
 		}
-		include "view/produkt.phtml";
+		include "/../view/produkt.phtml";
 	}
-	public function dodaj()
+        
+	public function dodaj() # warning mozna dodac produkt z brakujacymi danymi i wtedy wszystko sie wali
 	{
 		if(isset($_POST['dodaj']))
 		{
@@ -97,9 +102,10 @@ class produkt_Model extends Model
 						$error = "Wybrany plik jest zbyt duzy.";
 						$uploadOk = 0;
 					}
-					// Allow certain file formats
+					// Allow certain file formats + dodano rozszerzenie plikow duzymi literami ~przemek
 					if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-					&& $imageFileType != "gif" ) {
+					&& $imageFileType != "gif"  && $imageFileType != "JPG" && $imageFileType != "PNG" && $imageFileType != "JPEG"
+					&& $imageFileType != "GIF") {
 						$error = "Zly format zdjecia, tylko JPG, JPEG, PNG & GIF.";
 						$uploadOk = 0;
 					}
@@ -111,16 +117,24 @@ class produkt_Model extends Model
 						if (move_uploaded_file($_FILES["nazwyPlikow"]["tmp_name"][$i], $target_file[$i])) {			
 							if($name != $_POST['nazwa_produktu'])
 							{
-								mysql_query("INSERT INTO produkt VALUES (NULL, '".$_POST['nazwa_produktu']."', '".$_POST['rozmiar']."', '".$_POST['opis_produktu']."', '".$_POST['grupa_produktow']."', '".$_POST['grupa_wiekowa']."', '".$_POST['ilosc_produktow']."')"); 
-								$id_p = mysql_insert_id();
-								mysql_query("INSERT INTO cena VALUES (NULL, '".$_POST['cena_magazynowa']."', '".time()."', '".$_POST['obowiazuje_do']."', '".$this->getLoggedAdminId()."')"); 
-								$id_c = mysql_insert_id();
-								mysql_query("INSERT INTO produkt_cena VALUES (NULL, '".$_POST['cena_sprzedazy']."', '".$id_p."', '".$id_c."')"); 
-								$id = $id_p;
+                                                                $tab1=array($_POST['nazwa_produktu'], $_POST['rozmiar'], $_POST['opis_produktu'], $_POST['grupa_produktow'], $_POST['grupa_wiekowa'], $_POST['ilosc_produktow']);
+                                                                $id_p = produkt::addProdukt($tab1);
+								#mysql_query("INSERT INTO produkt VALUES (NULL, '".$_POST['nazwa_produktu']."', '".$_POST['rozmiar']."', '".$_POST['opis_produktu']."', '".$_POST['grupa_produktow']."', '".$_POST['grupa_wiekowa']."', '".$_POST['ilosc_produktow']."')"); 
+								#$id_p = mysql_insert_id();
+								#mysql_query("INSERT INTO cena VALUES (NULL, '".$_POST['cena_magazynowa']."', '".time()."', '".$_POST['obowiazuje_do']."', '".$this->getLoggedAdminId()."')"); 
+								$tab2=array($_POST['cena_magazynowa'], date('Y-m-d'), $_POST['obowiazuje_do'], $this->getLoggedAdminId());
+                                                                $id_c=cena::addCena($tab2);
+                                                                #$id_c = mysql_insert_id();
+								#mysql_query("INSERT INTO produkt_cena VALUES (NULL, '".$_POST['cena_sprzedazy']."', '".$id_p."', '".$id_c."')"); 
+								$tab3=array($_POST['cena_sprzedazy'], $id_p, $id_c);
+                                                                prod_cena::addProdCena($tab3);
+                                                                $id = $id_p;
 								$name = $_POST['nazwa_produktu'];
 							}
-							mysql_query("INSERT INTO zdjecia VALUES (NULL, '".basename( $_FILES["nazwyPlikow"]["name"][$i])."', '".$id."')");
-							$spr == true;
+							#mysql_query("INSERT INTO zdjecia VALUES (NULL, '".basename( $_FILES["nazwyPlikow"]["name"][$i])."', '".$id."')");
+							$tab4=array(basename( $_FILES["nazwyPlikow"]["name"][$i]), $id);
+                                                        zdjecia::addZdjecia($tab4);
+                                                        $spr == true;
 							if($i == count($_FILES['nazwyPlikow']['name']))
 								$this->redirect("index.php?url=produkt", "error", "Produkt zostal dodany poprawnie!");
 						} else {
@@ -139,39 +153,41 @@ class produkt_Model extends Model
 		{
 			if($this->isLogged())
 			{
-				$result = $this->sql_query("SELECT * FROM produkt p, produkt_cena pc, cena c, zdjecia z WHERE p.ID_produktu = ".$_GET['id']." AND p.ID_produktu = pc.PRODUKT_ID_produktu AND c.ID_ceny = pc.CENA_ID_ceny AND z.PRODUKT_ID_produktu = p.ID_produktu");
-				return $result[0];
+				#$result = $this->sql_query("SELECT * FROM produkt p, produkt_cena pc, cena c, zdjecia z WHERE p.ID_produktu = ".$_GET['id']." AND p.ID_produktu = pc.PRODUKT_ID_produktu AND c.ID_ceny = pc.CENA_ID_ceny AND z.PRODUKT_ID_produktu = p.ID_produktu");
+				$result = myqueriesORM::pokazORM($_GET['id']);
+                                return $result;
 			}
 			else
 				$this->redirect("index.php?url=produkt", "error", "Zaloguj sie aby zobaczyc szczegoly wybranego produktu.");
 		}
 	}
-	public function usun()
+	public function usun() 
 	{
 		if(isset($_GET['id']))
 		{
 			if($this->isAdmin())
 			{
-				$result = $this->sql_query("SELECT * FROM produkt p, produkt_cena pc, cena c WHERE p.ID_produktu = ".$_GET['id']." AND p.ID_produktu = pc.PRODUKT_ID_produktu AND c.ID_ceny = pc.CENA_ID_ceny LIMIT 1");
-				if(!isset($_POST['usun']))
+				#$result = $this->sql_query("SELECT * FROM produkt p, produkt_cena pc, cena c WHERE p.ID_produktu = ".$_GET['id']." AND p.ID_produktu = pc.PRODUKT_ID_produktu AND c.ID_ceny = pc.CENA_ID_ceny LIMIT 1");
+				$result= myqueriesORM::pokazORM2($_GET['id']);
+                            if(!isset($_POST['usun']))
 				{
-					return $result[0];
+					return $result;
 				}
 				else if(isset($_POST['usun']))
 				{
-					$foto = $this->sql_query("SELECT * FROM zdjecia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");					
-					for($i=0; $i<count($foto); $i++)
-					{
-						mysql_query("DELETE FROM zdjecia WHERE PRODUKT_ID_produktu = ".$result[0]['ID_produktu']."");
-					}
-					$opinia = $this->sql_query("SELECT * FROM opinia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");
-					for($i=0; $i<count($opinia); $i++)
-					{
-						mysql_query("DELETE FROM opinia WHERE PRODUKT_ID_produktu = ".$result[0]['ID_produktu']."");
-					}
-					mysql_query("DELETE FROM produkt_cena WHERE CENA_ID_ceny = ".$result[0]['ID_ceny']."");
-					mysql_query("DELETE FROM produkt WHERE ID_produktu = ".$result[0]['ID_produktu']."");
-					mysql_query("DELETE FROM cena WHERE ID_ceny = ".$result[0]['ID_ceny']."");
+					#$foto = $this->sql_query("SELECT * FROM zdjecia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");					
+					$foto = zdjecia::findZdjeciaWhere($_GET['id']); # ???
+                                        zdjecia::deleteZdjeciaWhere($result['ID_produktu']); # wyglada na to ze 1 produkt moze miec tylko 1 zdjecie, jak nie to bum...
+					#$opinia = $this->sql_query("SELECT * FROM opinia WHERE PRODUKT_ID_produktu = ".$_GET['id']."");
+					$opinia = opinia::findOpiniaWhere($_GET['id']); # ???
+                                        #mysql_query("DELETE FROM opinia WHERE PRODUKT_ID_produktu = ".$result['ID_produktu']."");
+                                        opinia::deleteAllOpiniaWhere($result['ID_produktu']);    
+					#mysql_query("DELETE FROM produkt_cena WHERE CENA_ID_ceny = ".$result['ID_ceny'].""); chyba zle bo jedna cena moze miec wiele produkt_cena ???
+                                        prod_cena::deleteProdCenaWhere($result['ID_ceny']);
+					#mysql_query("DELETE FROM produkt WHERE ID_produktu = ".$result['ID_produktu']."");
+					produkt::deleteProdukt($result['ID_produktu']);
+                                        #mysql_query("DELETE FROM cena WHERE ID_ceny = ".$result['ID_ceny']."");
+                                        cena::deleteCena($result['ID_ceny']);
 					$this->redirect("index.php?url=produkt", "error", "Produkt zostal pomyslnie usuniety.");
 				}
 			}
@@ -186,21 +202,27 @@ class produkt_Model extends Model
 		{
 			if($this->isAdmin())
 			{
-				$result = $this->sql_query("SELECT * FROM produkt p, produkt_cena pc, cena c WHERE p.ID_produktu = ".$_GET['id']." AND p.ID_produktu = pc.PRODUKT_ID_produktu AND c.ID_ceny = pc.CENA_ID_ceny LIMIT 1");
-				if(!isset($_POST['edytuj']))
+				#$result = $this->sql_query("SELECT * FROM produkt p, produkt_cena pc, cena c WHERE p.ID_produktu = ".$_GET['id']." AND p.ID_produktu = pc.PRODUKT_ID_produktu AND c.ID_ceny = pc.CENA_ID_ceny LIMIT 1");
+				$result= myqueriesORM::pokazORM2($_GET['id']);
+                            if(!isset($_POST['edytuj']))
 				{
-					return $result[0];
+					return $result;
 				}
 				else if(isset($_POST['edytuj']))
-				{
-					mysql_query("UPDATE produkt SET nazwa_produktu = '".$_POST['nazwa_produktu']."', opis_produktu = '".$_POST['opis_produktu']."', grupa_produktow = '".$_POST['grupa_produktow']."', grupa_wiekowa = '".$_POST['grupa_wiekowa']."', ilosc_produktow = '".$_POST['ilosc_produktow']."' WHERE ID_produktu = ".$result[0]['ID_produktu'].""); 
-					mysql_query("UPDATE cena SET cena_magazynowa = '".$_POST['cena_magazynowa']."', obowiazuje_do = '".$_POST['obowiazuje_do']."' WHERE ID_ceny = ".$result[0]['ID_ceny']."");
-					mysql_query("UPDATE produkt_cena SET cena_sprzedazy = '".$_POST['cena_sprzedazy']."' WHERE CENA_ID_ceny = ".$result[0]['ID_ceny']."");
-					$this->redirect("index.php?url=produkt", "error", "Produkt zostal zedytowany pomyslnie.");
+				{       
+					#mysql_query("UPDATE produkt SET nazwa_produktu = '".$_POST['nazwa_produktu']."', opis_produktu = '".$_POST['opis_produktu']."', grupa_produktow = '".$_POST['grupa_produktow']."', grupa_wiekowa = '".$_POST['grupa_wiekowa']."', ilosc_produktow = '".$_POST['ilosc_produktow']."' WHERE ID_produktu = ".$result[0]['ID_produktu'].""); 
+					$tab1=array($_POST['nazwa_produktu'],$_POST['opis_produktu'],$_POST['grupa_produktow'],$_POST['grupa_wiekowa'],$_POST['ilosc_produktow']);
+                                        produkt::updateProdukt($result['ID_produktu'],$tab1);
+                                        #mysql_query("UPDATE cena SET cena_magazynowa = '".$_POST['cena_magazynowa']."', obowiazuje_do = '".$_POST['obowiazuje_do']."' WHERE ID_ceny = ".$result[0]['ID_ceny']."");
+					$tab2=array($_POST['cena_magazynowa'],$_POST['obowiazuje_do'],);
+                                        cena::updateCena($result['ID_ceny'],$tab2);
+                                        #mysql_query("UPDATE produkt_cena SET cena_sprzedazy = '".$_POST['cena_sprzedazy']."' WHERE CENA_ID_ceny = ".$result[0]['ID_ceny']."");
+                                        prod_cena::updateProdCena1($result['ID_ceny'], $_POST['cena_sprzedazy']);# dla CENA_ID_ceny a nie ID_obecnej_ceny, niebezpieczne?
+                                        $this->redirect("index.php?url=produkt", "error", "Produkt zostal zedytowany pomyslnie.");
 				}
 			}
 			else
-				$this->redirect("index.php?url=produkt", "error", "Niestety nie posiadasz uprawniec administratora.");
+				$this->redirect("index.php?url=produkt", "error", "Niestety nie posiadasz uprawnien administratora.");
 		}
 	}
 	
@@ -211,10 +233,15 @@ class produkt_Model extends Model
 			if(isset($_POST['id_produktu']))
 			{
 				if($this->isAdmin())
-					mysql_query("INSERT INTO opinia VALUES (NULL, '".$this->getLoggedAdminId()."', '".$_POST['skala']."', '".$_POST['opinia']."', '".$_POST['id_produktu']."', ".time().")");
-				else
-					mysql_query("INSERT INTO opinia VALUES (NULL, '".$this->getLoggedClientId()."', '".$_POST['skala']."', '".$_POST['opinia']."', '".$_POST['id_produktu']."', ".time().")");
-	
+                                {#mysql_query("INSERT INTO opinia VALUES (NULL, '".$this->getLoggedAdminId()."', '".$_POST['skala']."', '".$_POST['opinia']."', '".$_POST['id_produktu']."', ".time().")");
+                                $tab1=array($this->getLoggedAdminId(), $_POST['skala'],$_POST['opinia'],$_POST['id_produktu'],date('Y-m-d'));
+                                opinia::addOpinia($tab1);    
+                                }
+                                    else
+                                    {#mysql_query("INSERT INTO opinia VALUES (NULL, '".$this->getLoggedClientId()."', '".$_POST['skala']."', '".$_POST['opinia']."', '".$_POST['id_produktu']."', ".time().")");
+                                    $tab2=array($this->getLoggedClientId(), $_POST['skala'],$_POST['opinia'],$_POST['id_produktu'],date('Y-m-d'));
+                                    opinia::addOpinia($tab2);    
+                                    }
 				$this->redirect("index.php?url=produkt", "error", "Opinia zostala dodana pomyslnie.");
 			}
 		}

@@ -1,7 +1,7 @@
 <?php
 include_once("model/model.php"); 
 
-class kontakt_Model extends Model 
+class kontakt_Model extends ModelClass 
 {
 	public function __construct()  
 	{
@@ -36,12 +36,14 @@ class kontakt_Model extends Model
 			}
 			else
 			{
-				$result = $this->sql_query("SELECT * FROM klient WHERE ID_klienta = ".$this->getLoggedClientId()."");
-				$to      = 'sklep-intern@wp.pl';
+				#$result = $this->sql_query("SELECT * FROM klient WHERE ID_klienta = ".$this->getLoggedClientId()."");
+				$data = klient::findKlient($this->getLoggedClientId());
+                                $result = $data->as_array();
+                                $to      = 'sklep-intern@wp.pl';
 				$subject = $_POST['temat'];
 				$message = $_POST['wiadomosc'];
-				$headers = 'From: '.$result[0]['email'].'' . "\r\n" .
-					'Reply-To: '.$result[0]['email'].'' . "\r\n" .
+				$headers = 'From: '.$result['email'].'' . "\r\n" .
+					'Reply-To: '.$result['email'].'' . "\r\n" .
 					'X-Mailer: PHP/' . phpversion();
 
 				mail($to, $subject, $message, $headers);
@@ -54,15 +56,15 @@ class kontakt_Model extends Model
 		if($this->isAdmin())
 		{
 			if(!isset($_POST['wyslij_wiadomosc']))
-			{
+			{   
 				$check = false;
-				$result2 = $this->sql_query("SELECT * FROM klient");
-				if($result = $this->sql_query("SELECT * FROM klient"))
+				#$result2 = $this->sql_query("SELECT * FROM klient");
+                                
+				if($result = klient::allKlient())
 				{		
-					//$result = $this->sql_query("SELECT * FROM klient");
 					$check = true;
 				}
-				include "view/kontakt_wiadomosc.phtml";
+				include "/../view/kontakt_wiadomosc.phtml";
 			}
 			else if(isset($_POST['wyslij_wiadomosc']))
 			{
@@ -89,12 +91,15 @@ class kontakt_Model extends Model
 				$check = false;
 				$date = date('Y-m-d', time());
 				$checkedDate = strtotime("-7 days", strtotime($date));
-				//$result2 = $this->sql_query("SELECT * FROM zamowienie WHERE data_wystawienia < ".$checkedDate." AND status = 'p'");				
-				
-				if($result = $this->sql_query("SELECT * FROM zamowienie z, klient k WHERE z.data_wystawienia < ".$checkedDate." AND z.status = 'p' AND z.KLIENT_ID_klienta = k.ID_klienta"))
+				#$result2 = $this->sql_query("SELECT * FROM zamowienie WHERE data_wystawienia < ".$checkedDate." AND status = 'p'");
+                                $status="p";
+				$result2 = zamowienie::allZamowienieWhere($status,$checkedDate);
+				if(count($result2) > 0)
 				{	
-					//$result = $this->sql_query("SELECT * FROM zamowienie z, klient k WHERE z.data_wystawienia < ".$checkedDate." AND z.status = 'p' AND z.KLIENT_ID_klienta = k.ID_klienta");
-					$check = true;
+                                    #$result = $this->sql_query("SELECT * FROM zamowienie z, klient k WHERE z.data_wystawienia < ".$checkedDate." AND z.status = 'p' AND z.KLIENT_ID_klienta = k.ID_klienta");
+                                    $array=[$checkedDate,$status];
+                                    $result = zamowienie::allZamowienieWhere2($array);
+                                    $check = true;
 				}
 				include "/../view/kontakt_przypomnienie.phtml";
 			}
